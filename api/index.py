@@ -1,6 +1,8 @@
 from flask import Flask, request
 from twilio.twiml.messaging_response import MessagingResponse
 import requests
+from nlpchatbot import chatbot_response_text
+
 
 app = Flask(__name__)
 
@@ -23,20 +25,12 @@ def sms_reply():
     # Fetch the message
     msg = request.form.get('Body')
 
-    # Get product data
-    products = get_product_data()
+    chatbot_response = chatbot_response_text(msg)
+   
 
     # Create reply
     resp = MessagingResponse()
-    
-    if products:
-        # Format product data as a string
-        product_list = "\n\n".join([f"Name: {product['name']}\nDescription: {product['description']}\nPrice: {product['price']}" for product in products])
-
-        # Send product data in the SMS response
-        resp.message(f"Products:\n{product_list}")
-    else:
-        resp.message("Failed to fetch product data")
+    resp.message(chatbot_response)
 
     return str(resp)
 
