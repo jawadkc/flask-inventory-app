@@ -1,5 +1,5 @@
 import os
-os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = "round-catfish-406117-ba6070488926"
+os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = "round-catfish-406117-ba6070488926.json"
 
 #import dialogflow_v2 as dialogflow
 from google.cloud import dialogflow_v2 as dialogflow
