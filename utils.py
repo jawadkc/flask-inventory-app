@@ -1,7 +1,9 @@
 import os
 os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = "round-catfish-406117-ba6070488926"
 
-import dialogflow_v2 as dialogflow
+#import dialogflow_v2 as dialogflow
+from google.cloud import dialogflow_v2 as dialogflow
+
 dialogflow_session_client = dialogflow.SessionsClient()
 PROJECT_ID = "round-catfish-406117"
 
