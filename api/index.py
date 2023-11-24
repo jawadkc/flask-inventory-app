@@ -1,20 +1,9 @@
 from flask import Flask, request
 from twilio.twiml.messaging_response import MessagingResponse
-import requests
-from nlpchatbot import chatbot_response_text
 
+from utils import fetch_reply
 
 app = Flask(__name__)
-
-# Function to fetch product data from the API
-def get_product_data():
-    # Make a GET request to the API endpoint that provides product data
-    response = requests.get('https://inventory-website.vercel.app/api/product/getPs')
-    
-    if response.status_code == 200:
-        return response.json().get('allProducts')  # Extracting product data from the response
-    else:
-        return None
 
 @app.route("/")
 def hello():
@@ -22,15 +11,15 @@ def hello():
 
 @app.route("/sms", methods=['POST'])
 def sms_reply():
+    """Respond to incoming calls with a simple text message."""
     # Fetch the message
     msg = request.form.get('Body')
-
-    chatbot_response = chatbot_response_text(msg)
-   
+    phone_no = request.form.get('From')
+    reply = fetch_reply(msg, phone_no)
 
     # Create reply
     resp = MessagingResponse()
-    resp.message(chatbot_response)
+    resp.message(reply)
 
     return str(resp)
 

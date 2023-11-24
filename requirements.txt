@@ -1,7 +1,3 @@
 Flask==3.0.0
 twilio==7.0.0
-nltk
-numpy
-tensorflow
-keras
-requests
+dialogflow
