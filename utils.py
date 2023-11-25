@@ -6,7 +6,6 @@ import pickle
 import random
 import numpy as np
 from keras.models import load_model
-from sklearn.model_selection import train_test_split
 
 # Necessary NLTK downloads
 # nltk.download('punkt')
