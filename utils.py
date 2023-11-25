@@ -9,9 +9,9 @@ from keras.models import load_model
 from sklearn.model_selection import train_test_split
 
 # Necessary NLTK downloads
-nltk.download('punkt')
-nltk.download('wordnet')
-nltk.download('omw-1.4')
+# nltk.download('punkt')
+# nltk.download('wordnet')
+# nltk.download('omw-1.4')
 
 # Code for dataset loading, preprocessing, and model training (removed for deployment)
 
