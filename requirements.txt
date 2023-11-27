@@ -1,6 +1,2 @@
 Flask==3.0.0
 twilio==7.0.0
-numpy
-nltk
-keras
-scikit-learn
