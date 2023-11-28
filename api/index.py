@@ -1,66 +1,110 @@
 from flask import Flask, request
 from twilio.twiml.messaging_response import MessagingResponse
-import requests
 
 app = Flask(__name__)
 
+class InventoryManager:
+    def __init__(self):
+        self.current_menu = "main"
+        self.products = []
+        self.suppliers = []
+        self.employees = []
+
+    def handle_main_menu(self, option):
+        reply = ""
+        if option == '1':
+            reply = "1. Add a product\n2. Remove a product\n3. Edit a product\n4. Show all the products\n5. Return to the main menu"
+            self.current_menu = "product_menu"
+        elif option == '2':
+            reply = "1. Add a supplier\n2. Remove a supplier\n3. Edit a supplier\n4. Show all the suppliers\n5. Return to the main menu"
+            self.current_menu = "supplier_menu"
+        elif option == '3':
+            reply = "1. Add an employee\n2. Remove an employee\n3. Edit an employee\n4. Show all the employees\n5. Return to the main menu"
+            self.current_menu = "employee_menu"
+        elif option == '4':
+            reply = "General information about the whole system"
+            # AI chatbot interaction or general information
+        else:
+            reply = "Invalid option. Please choose a valid option."
+
+        return reply
+
+
+    def handle_product_menu(self, option):
+        reply = ""
+        if option == '1':
+            reply = "Please provide details of the product in the format:\nname,description,price,quantity,unitOfMeasure,category,brand,sku"
+            # Handle adding a product
+        elif option == '2':
+            reply = "Please provide the name of the product you want to delete"
+            # Handle removing a product
+        elif option == '3':
+            reply = "Please provide the name of the product you want to edit"
+            # Handle editing a product
+        elif option == '4':
+            reply = "List of Products:\n"
+            for product in self.products:
+                reply += f"{product['name']} - {product['price']}\n"
+        elif option == '5':
+            reply = "Returning to the main menu"
+            self.current_menu = "main"
+        else:
+            reply = "Invalid option. Please choose a valid option."
+
+        return reply
+
+    def handle_supplier_menu(self, option):
+        reply = ""
+        if option == '1':
+            reply = "Please provide details of the supplier in the format:\nname,contactPerson,email,phone,address"
+            # Handle adding a supplier
+        elif option == '2':
+            reply = "Please provide the name of the supplier you want to delete"
+            # Handle removing a supplier
+        elif option == '3':
+            reply = "Please provide the name of the supplier you want to edit"
+            # Handle editing a supplier
+        elif option == '4':
+            reply = "List of Suppliers:\n"
+            for supplier in self.suppliers:
+                reply += f"{supplier['name']} - {supplier['contactPerson']}\n"
+        elif option == '5':
+            reply = "Returning to the main menu"
+            self.current_menu = "main"
+        else:
+            reply = "Invalid option. Please choose a valid option."
+
+        return reply
+
+    def handle_employee_menu(self, option):
+        reply = ""
+        if option == '1':
+            reply = "Please provide details of the employee in the format:\nname,email,phone,address,position,hireDate,salary,workingHours,status"
+            # Handle adding an employee
+        elif option == '2':
+            reply = "Please provide the name of the employee you want to delete"
+            # Handle removing an employee
+        elif option == '3':
+            reply = "Please provide the name of the employee you want to edit"
+            # Handle editing an employee
+        elif option == '4':
+            reply = "List of Employees:\n"
+            for employee in self.employees:
+                reply += f"{employee['name']} - {employee['position']}\n"
+        elif option == '5':
+            reply = "Returning to the main menu"
+            self.current_menu = "main"
+        else:
+            reply = "Invalid option. Please choose a valid option."
+
+        return reply
+
+
+inventory_manager = InventoryManager()
+
 @app.route("/")
 def hello():
-    return "Hello, World!"
-
-# Functions to interact with the Inventory Management system via API
-
-def get_products():
-    response = requests.get('https://inventory-website.vercel.app/api/product/getPs')
-    if response.status_code == 200:
-        return response.json().get('allProducts')
-    else:
-        return None
-
-def get_product(product_id):
-    response = requests.get(f'https://inventory-website.vercel.app/api/product/getP?id={product_id}')
-    if response.status_code == 200:
-        return response.json().get('product')
-    else:
-        return None
-
-def add_product(product_data):
-    response = requests.post('https://inventory-website.vercel.app/api/product/addP', json=product_data)
-    return response.status_code  # Return status code for success/failure
-
-def remove_product(product_id):
-    response = requests.delete(f'https://inventory-website.vercel.app/api/product/removeP?id={product_id}')
-    return response.status_code  # Return status code for success/failure
-
-# Main menu for the chatbot
-
-def handle_menu_option(option, phone_number):
-    resp = MessagingResponse()
-    reply = ""
-
-    if option == '1':
-        products = get_products()
-        if products:
-            reply = "List of Products:\n"
-            for product in products:
-                reply += f"{product['name']} - {product['price']}\n"
-        else:
-            reply = "Failed to fetch products."
-
-    elif option == '2':
-        reply = "Please enter the product ID:"
-    
-    elif option == '3':
-        reply = "Please enter the details of the product in the format: 'name,price,category,quantity'"
-
-    elif option == '4':
-        reply = "Please enter the product ID to remove:"
-
-    else:
-        reply = "Invalid option. Please choose a valid option."
-
-    resp.message(reply)
-    return str(resp)
+    return "Welcome to the Inventory Management Website"
 
 @app.route("/sms", methods=['POST'])
 def sms_reply():
@@ -68,17 +112,20 @@ def sms_reply():
     phone_no = request.form.get('From')
     resp = MessagingResponse()
 
-    if msg == 'menu':
-        reply = "Welcome to Inventory Management System!\n"
-        reply += "1. Get Products\n"
-        reply += "2. Get a Particular Product\n"
-        reply += "3. Add a Product\n"
-        reply += "4. Remove a Product\n"
-        reply += "Please enter the option number you want to choose:"
+    reply = ""
+    if inventory_manager.current_menu == "main":
+        reply = "Welcome to the Inventory Management Website\n1. Information regarding Products\n2. Information regarding Suppliers\n3. Information regarding Employees\n4. General information about the whole system"
         resp.message(reply)
-    else:
-        resp.message(handle_menu_option(msg, phone_no))
-    
+    elif inventory_manager.current_menu == "product_menu":
+        reply = inventory_manager.handle_product_menu(msg)
+        resp.message(reply)
+    elif inventory_manager.current_menu == "supplier_menu":
+        reply = inventory_manager.handle_supplier_menu(msg)
+        resp.message(reply)
+    elif inventory_manager.current_menu == "employee_menu":
+        reply = inventory_manager.handle_employee_menu(msg)
+        resp.message(reply)
+
     return str(resp)
 
 if __name__ == "__main__":
