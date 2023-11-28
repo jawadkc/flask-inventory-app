@@ -110,19 +110,20 @@ def hello():
 def sms_reply():
     msg = request.form.get('Body').lower()
     phone_no = request.form.get('From')
+    
     resp = MessagingResponse()
 
     reply = ""
     if inventory_manager.current_menu == "main":
         reply = "Welcome to the Inventory Management Website\n1. Information regarding Products\n2. Information regarding Suppliers\n3. Information regarding Employees\n4. General information about the whole system"
         resp.message(reply)
-    elif inventory_manager.current_menu == "product_menu":
+    elif inventory_manager.current_menu == "1":
         reply = inventory_manager.handle_product_menu(msg)
         resp.message(reply)
-    elif inventory_manager.current_menu == "supplier_menu":
+    elif inventory_manager.current_menu == "2":
         reply = inventory_manager.handle_supplier_menu(msg)
         resp.message(reply)
-    elif inventory_manager.current_menu == "employee_menu":
+    elif inventory_manager.current_menu == "3":
         reply = inventory_manager.handle_employee_menu(msg)
         resp.message(reply)
 
