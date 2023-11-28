@@ -119,13 +119,13 @@ def sms_reply():
         reply = "Welcome to the Inventory Management Website\n1. Information regarding Products\n2. Information regarding Suppliers\n3. Information regarding Employees\n4. General information about the whole system"
         resp.message(reply)
     elif inventory_manager.current_menu == "1":
-        reply = inventory_manager.handle_product_menu(msg)
+        reply = inventory_manager.handle_main_menu(msg)
         resp.message(reply)
     elif inventory_manager.current_menu == "2":
-        reply = inventory_manager.handle_supplier_menu(msg)
+        reply = inventory_manager.handle_main_menu(msg)
         resp.message(reply)
     elif inventory_manager.current_menu == "3":
-        reply = inventory_manager.handle_employee_menu(msg)
+        reply = inventory_manager.handle_main_menu(msg)
         resp.message(reply)
 
     return str(resp)
