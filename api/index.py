@@ -110,7 +110,8 @@ def hello():
 def sms_reply():
     msg = request.form.get('Body').lower()
     phone_no = request.form.get('From')
-    
+    if msg=="1" or msg=="2" or msg=="3":
+        inventory_manager.current_menu=msg
     resp = MessagingResponse()
 
     reply = ""
