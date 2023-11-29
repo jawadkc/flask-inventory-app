@@ -38,6 +38,7 @@ def hello():
 
 @app.route("/sms", methods=['POST'])
 def sms_reply():
+    reply = ""  # Initializing with a default value
     msg = request.form.get('Body').lower()
     user_phone = request.form.get('From')
     user_session = session.get(user_phone, {'first_time': True})
@@ -47,6 +48,7 @@ def sms_reply():
 
     if user_session['first_time']:
         reply = "Welcome to the Inventory Management Website\n1. Information regarding Products\n2. Information regarding Suppliers\n3. Information regarding Employees\n4. General information about the whole system"
+
         resp.message(reply)
         user_session['first_time'] = False
         session[user_phone] = user_session
