@@ -42,8 +42,7 @@ def sms_reply():
     msg = request.form.get('Body').lower()
     user_phone = request.form.get('From')
     user_session = session.get(user_phone, {'first_time': True})
-
-    
+    print("use_session after initial assignment: ",user_session)
     resp = MessagingResponse()
 
     if user_session['first_time']:
@@ -222,6 +221,11 @@ def sms_reply():
             pass
     
     
+    #if the above conditions are not working
+    print("Before sending the response: ",reply)
+    session[user_phone] = user_session
+    resp.message(reply)
+    return str(resp)
 
 if __name__ == "__main__":
     app.run(debug=True)
