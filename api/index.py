@@ -38,7 +38,7 @@ def hello():
 
 @app.route("/sms", methods=['POST'])
 def sms_reply():
-    reply = ""  # Initializing with a default value
+    reply = "Welcome"  # Initializing with a default value
     msg = request.form.get('Body').lower()
     user_phone = request.form.get('From')
     user_session = session.get(user_phone, {'first_time': True})
@@ -55,6 +55,7 @@ def sms_reply():
     else:
         first_menu = user_session.get('first_menu')
         second_menu = user_session.get('second_menu')
+        print("first_menu,second_menu",first_menu,second_menu)
         
         if not first_menu:
             if msg == '1':
@@ -195,7 +196,8 @@ def sms_reply():
         else:
             # Respond based on first_menu
             pass
-
+    
+    print("Before sending the response: ",reply)
    
     resp.message(reply)
     return str(resp)
