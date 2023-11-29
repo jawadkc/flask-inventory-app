@@ -73,8 +73,7 @@ def sms_reply():
             else:
                 reply = "Invalid option selected"
     
-            resp.message(reply)
-            return str(resp)
+           
 
         if first_menu == 'productmenu':
             if not second_menu:
@@ -112,8 +111,7 @@ def sms_reply():
                     #delete all the first_menu, secon_menu and first_Time if necessary
                 else:
                     reply = "Invalid option. Please choose a valid option."
-                resp.message(reply)
-                return str(resp)
+                
 
                 # ... handle other options for product menu
 
@@ -154,8 +152,7 @@ def sms_reply():
                 else:
                     reply = "Invalid option. Please choose a valid option."
 
-                resp.message(reply)
-                return str(resp)
+                
 
         elif first_menu == 'employeemenu':
             if not second_menu:
@@ -183,8 +180,8 @@ def sms_reply():
 
                 else:
                     reply = "Invalid option. Please choose a valid option."
-                resp.message(reply)
-                return str(resp)    
+                
+                
 
 
         session[user_phone] = user_session
@@ -198,7 +195,7 @@ def sms_reply():
             pass
 
    
-
+    resp.message(reply)
     return str(resp)
 
 if __name__ == "__main__":
