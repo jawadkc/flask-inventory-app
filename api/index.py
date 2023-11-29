@@ -48,10 +48,9 @@ def sms_reply():
 
     if user_session['first_time']:
         reply = "Welcome to the Inventory Management Website\n1. Information regarding Products\n2. Information regarding Suppliers\n3. Information regarding Employees\n4. General information about the whole system"
-
-        
+  
         user_session['first_time'] = False
-        session[user_phone] = user_session
+        
     else:
         first_menu = user_session.get('first_menu')
         second_menu = user_session.get('second_menu')
@@ -59,6 +58,7 @@ def sms_reply():
         
         if not first_menu:
             if msg == '1':
+                print("1 is pressed from the main menu")
                 user_session['first_menu'] = 'productmenu'
                 first_menu = 'productmenu'
                 reply = "1. Add a product\n2. Remove a product\n3. Edit a product\n4. Show all the products\n5. Return to the main menu"
@@ -82,6 +82,7 @@ def sms_reply():
             if not second_menu:
                 # Handle product menu options
                 if msg == '1':
+                    print("add product is selected")
                     user_session['second_menu'] = 'addproduct'
                     second_menu = 'addproduct'
                     reply = "Please provide details of the product in the format:\nname,description,price,quantity,unitOfMeasure,category,brand,sku"
@@ -110,6 +111,10 @@ def sms_reply():
 
                     #call the api to get all the products
                 elif msg == '5':
+                    user_session['second_menu'] = None  # Resetting the submenu indicator
+
+                    # Reset the first menu indicator to the main menu
+                    user_session['first_menu'] = 'main'
                     reply = "Returning to the main menu\n1. Information regarding Products\n2. Information regarding Suppliers\n3. Information regarding Employees\n4. General information about the whole system"
                     #delete all the first_menu, secon_menu and first_Time if necessary
                 else:
@@ -150,6 +155,10 @@ def sms_reply():
                     return str(resp)
                     #logic for getting the list of suppliers
                 elif msg == '5':
+                    user_session['second_menu'] = None  # Resetting the submenu indicator
+
+                    # Reset the first menu indicator to the main menu
+                    user_session['first_menu'] = 'main'
                     reply = "Returning to the main menu\n1. Information regarding Products\n2. Information regarding Suppliers\n3. Information regarding Employees\n4. General information about the whole system"
                     #logic for going back
                 else:
@@ -179,15 +188,16 @@ def sms_reply():
                     reply = "List of Employees:\n"
                     
                 elif msg == '5':
+                    user_session['second_menu'] = None  # Resetting the submenu indicator
+
+                    # Reset the first menu indicator to the main menu
+                    user_session['first_menu'] = 'main'
                     reply = "Returning to the main menu\n1. Information regarding Products\n2. Information regarding Suppliers\n3. Information regarding Employees\n4. General information about the whole system"
 
                 else:
                     reply = "Invalid option. Please choose a valid option."
                 
-                
-
-
-        session[user_phone] = user_session
+        
 
         # Respond based on the menus
         if second_menu:
@@ -198,7 +208,7 @@ def sms_reply():
             pass
     
     print("Before sending the response: ",reply)
-   
+    session[user_phone] = user_session
     resp.message(reply)
     return str(resp)
 
