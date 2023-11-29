@@ -221,10 +221,7 @@ def sms_reply():
             # Respond based on first_menu
             pass
     
-    print("Before sending the response: ",reply)
-    session[user_phone] = user_session
-    resp.message(reply)
-    return str(resp)
+    
 
 if __name__ == "__main__":
     app.run(debug=True)
