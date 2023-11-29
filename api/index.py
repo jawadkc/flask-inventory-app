@@ -43,13 +43,16 @@ def sms_reply():
     user_phone = request.form.get('From')
     user_session = session.get(user_phone, {'first_time': True})
 
-    msg = request.form.get('Body').lower()
+    
     resp = MessagingResponse()
 
     if user_session['first_time']:
         reply = "Welcome to the Inventory Management Website\n1. Information regarding Products\n2. Information regarding Suppliers\n3. Information regarding Employees\n4. General information about the whole system"
         print("reply in first_time",reply)
         user_session['first_time'] = False
+        session[user_phone] = user_session
+        resp.message(reply)
+        return str(resp)
         
     else:
         first_menu = user_session.get('first_menu')
@@ -75,7 +78,9 @@ def sms_reply():
 
             else:
                 reply = "Invalid option selected"
-    
+            session[user_phone] = user_session
+            resp.message(reply)
+            return str(resp)
            
 
         if first_menu == 'productmenu':
@@ -122,6 +127,9 @@ def sms_reply():
                 
 
                 # ... handle other options for product menu
+                session[user_phone] = user_session
+                resp.message(reply)
+                return str(resp)
 
         elif first_menu == 'suppliermenu':
             if not second_menu:
@@ -163,6 +171,9 @@ def sms_reply():
                     #logic for going back
                 else:
                     reply = "Invalid option. Please choose a valid option."
+                session[user_phone] = user_session
+                resp.message(reply)
+                return str(resp)    
 
                 
 
@@ -196,6 +207,9 @@ def sms_reply():
 
                 else:
                     reply = "Invalid option. Please choose a valid option."
+                session[user_phone] = user_session
+                resp.message(reply)
+                return str(resp)    
                 
         
 
