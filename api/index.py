@@ -18,7 +18,7 @@ def get_product_id_by_name(product_name):
     if not product_name:
         return "Product name is required"
 
-    api_url = f"https://your-nextjs-app.vercel.app/api/productDetails?name={product_name}"
+    api_url = f"https://inventory-website.vercel.app/api/product/getId?name={product_name}"
 
     try:
         response = requests.get(api_url)
@@ -56,6 +56,22 @@ def add_product(name, price, category, quantity, sku, brand, unitOfMeasure, supp
 
     except requests.RequestException as e:
         return f"Error: {str(e)}"  # Handle any exception that occurred during the request
+
+
+def delete_product(product_id):
+    api_url = f"https://inventory-website.vercel.app/api/product/deleteP"
+    payload = {"productId": product_id}
+
+    try:
+        response = requests.delete(api_url, json=payload)
+        if response.status_code == 200:
+            return "Product deleted successfully"
+        elif response.status_code == 404:
+            return "Product not found"
+        else:
+            return "Failed to delete product"
+    except requests.RequestException as e:
+        return f"Error: {str(e)}"
     
 
 def get_suppliers():
@@ -67,6 +83,43 @@ def get_suppliers():
     else:
         return None  
 
+
+def get_supplier_id_by_name(supplier_name):
+    if not supplier_name:
+        return "Supplier name is required"
+
+    api_url = f"https://inventory-website.vercel.app/api/supplier/getId?name={supplier_name}"
+
+    try:
+        response = requests.get(api_url)
+        if response.status_code == 200:
+            supplier_id = response.json().get('_id')
+            return supplier_id if supplier_id else "Supplier not found"
+        elif response.status_code == 404:
+            return "Supplier not found"
+        else:
+            return "Failed to fetch supplier details"
+    except requests.RequestException as e:
+        return f"Error: {str(e)}"
+
+def delete_supplier(supplier_id):
+    api_url = f"https://inventory-website.vercel.app/api/supplier/deleteS"
+    payload = {"supplierId": supplier_id}
+
+    try:
+        response = requests.delete(api_url, json=payload)
+        if response.status_code == 200:
+            return "Supplier deleted successfully"
+        elif response.status_code == 404:
+            return "Supplier not found"
+        else:
+            return "Failed to delete supplier"
+    except requests.RequestException as e:
+        return f"Error: {str(e)}"
+    
+
+
+
 def get_employees():
     # Make a GET request to the API endpoint that provides employee data
     response = requests.get('https://inventory-website.vercel.app/api/employee/getEs')
@@ -76,14 +129,52 @@ def get_employees():
     else:
         return None      
 
+
+def get_employee_id_by_name(employee_name):
+    if not employee_name:
+        return "Employee name is required"
+
+    api_url = f"https://inventory-website.vercel.app/api/employee/getId?name={employee_name}"
+
+    try:
+        response = requests.get(api_url)
+        if response.status_code == 200:
+            employee_id = response.json().get('_id')
+            return employee_id if employee_id else "Employee not found"
+        elif response.status_code == 404:
+            return "Employee not found"
+        else:
+            return "Failed to fetch employee details"
+    except requests.RequestException as e:
+        return f"Error: {str(e)}"
+
+def delete_employee(employee_id):
+    api_url = f"https://inventory-website.vercel.app/api/employee/deleteS"
+    payload = {"employeeId": employee_id}
+
+    try:
+        response = requests.delete(api_url, json=payload)
+        if response.status_code == 200:
+            return "Employee deleted successfully"
+        elif response.status_code == 404:
+            return "Employee not found"
+        else:
+            return "Failed to delete employee"
+    except requests.RequestException as e:
+        return f"Error: {str(e)}"
+   
+
 @app.route("/")
 def hello():
     return "Welcome to the Inventory Management Website"
 
 @app.route("/sms", methods=['POST'])
 def sms_reply():
+    
     reply = "Welcome"  # Initializing with a default value
     msg = request.form.get('Body').lower()
+    if msg=="reset":
+        session.clear()
     user_phone = request.form.get('From')
     user_session = session.get(user_phone, {'first_time': True})
     print("use_session after initial assignment: ",user_session)
@@ -174,6 +265,26 @@ def sms_reply():
                 resp.message(reply)
                 return str(resp)
 
+            else:
+                if second_menu == 'removeproduct':
+                        product_name = msg  # Assuming the message contains the name of the product to remove
+                product_id = get_product_id_by_name(product_name)
+                if isinstance(product_id, str):
+                    # Handle cases where product is not found or error occurred
+                    reply = product_id
+                else:
+                    # Call the API or method to remove the product using product_id
+                    result = delete_product(product_id)
+                    if result == "Product deleted successfully":
+                        reply = f"Product {product_name} removed successfully"
+                    else:
+                        reply = f"Failed to remove product: {result}"
+                user_session['second_menu'] = None  # Reset the second menu
+                user_session['first_menu'] = None  # Reset the first menu
+                session[user_phone] = user_session
+                resp.message(reply)
+                return str(resp)  
+
         elif first_menu == 'suppliermenu':
             if not second_menu:
                 # Handle supplier menu options
@@ -216,7 +327,26 @@ def sms_reply():
                     reply = "Invalid option. Please choose a valid option."
                 session[user_phone] = user_session
                 resp.message(reply)
-                return str(resp)    
+                return str(resp)
+            else:
+                if second_menu == 'removesupplier':
+                        supplier_name = msg  # Assuming the message contains the name of the supplier to remove
+                supplier_id = get_supplier_id_by_name(supplier_name)
+                if isinstance(supplier_id, str):
+                    # Handle cases where supplier is not found or error occurred
+                    reply = supplier_id
+                else:
+                    # Call the API or method to remove the supplier using supplier_id
+                    result = delete_supplier(supplier_id)
+                    if result == "Supplier deleted successfully":
+                        reply = f"Supplier {supplier_name} removed successfully"
+                    else:
+                        reply = f"Failed to remove supplier: {result}"
+                user_session['second_menu'] = None  # Reset the second menu
+                user_session['first_menu'] = None  # Reset the first menu
+                session[user_phone] = user_session
+                resp.message(reply)
+                return str(resp)  
 
                 
 
@@ -265,16 +395,29 @@ def sms_reply():
                 session[user_phone] = user_session
                 resp.message(reply)
                 return str(resp)    
-                
+            else:
+                if second_menu == 'removeemployee':
+                        employee_name = msg  # Assuming the message contains the name of the employee to remove
+                employee_id = get_employee_id_by_name(employee_name)
+                if isinstance(employee_id, str):
+                    # Handle cases where employee is not found or error occurred
+                    reply = employee_id
+                else:
+                    # Call the API or method to remove the employee using employee_id
+                    result = delete_employee(employee_id)
+                    if result == "Employee deleted successfully":
+                        reply = f"Employee {employee_name} removed successfully"
+                    else:
+                        reply = f"Failed to remove employee: {result}"
+                user_session['second_menu'] = None  # Reset the second menu
+                user_session['first_menu'] = None  # Reset the first menu
+                session[user_phone] = user_session
+                resp.message(reply)
+                return str(resp)  
+     
         
 
-        # Respond based on the menus
-        if second_menu:
-            # Handle responses based on second_menu
-            pass
-        else:
-            # Respond based on first_menu
-            pass
+       
     
     
     #if the above conditions are not working
