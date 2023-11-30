@@ -14,6 +14,32 @@ def get_products():
     else:
         return None
 
+def add_product(name, price, category, quantity, sku, brand, unitOfMeasure, supplier, description):
+    api_url = "https://inventory-website.vercel.app/api/product/addP"
+    
+    form_data = {
+        "name": name,
+        "price": price,
+        "category": category,
+        "quantity": quantity,
+        "sku": sku,
+        "brand": brand,
+        "unitOfMeasure": unitOfMeasure,
+        "supplier": supplier,
+        "description": description
+    }
+
+    try:
+        response = requests.post(api_url, json=form_data)
+        if response.status_code == 200:
+            return "Product added successfully"  # Or any success message
+        else:
+            return "Failed to add product"  # Or any error message based on response
+
+    except requests.RequestException as e:
+        return f"Error: {str(e)}"  # Handle any exception that occurred during the request
+    
+
 def get_suppliers():
     # Make a GET request to the API endpoint that provides supplier data
     response = requests.get('https://inventory-website.vercel.app/api/supplier/getSs')
@@ -60,7 +86,7 @@ def sms_reply():
         
         if not first_menu:
             if msg == '1':
-                print("1 is pressed from the main menu")
+                
                 user_session['first_menu'] = 'productmenu'
                 first_menu = 'productmenu'
                 reply = "1. Add a product\n2. Remove a product\n3. Edit a product\n4. Show all the products\n5. Return to the main menu"
@@ -117,8 +143,8 @@ def sms_reply():
                 elif msg == '5':
                     user_session['second_menu'] = None  # Resetting the submenu indicator
 
-                    # Reset the first menu indicator to the main menu
-                    user_session['first_menu'] = 'main'
+                    # Reset the first menu indicator to None
+                    user_session['first_menu'] = None
                     reply = "Returning to the main menu\n1. Information regarding Products\n2. Information regarding Suppliers\n3. Information regarding Employees\n4. General information about the whole system"
                     #delete all the first_menu, secon_menu and first_Time if necessary
                 else:
@@ -165,7 +191,7 @@ def sms_reply():
                     user_session['second_menu'] = None  # Resetting the submenu indicator
 
                     # Reset the first menu indicator to the main menu
-                    user_session['first_menu'] = 'main'
+                    user_session['first_menu'] = None
                     reply = "Returning to the main menu\n1. Information regarding Products\n2. Information regarding Suppliers\n3. Information regarding Employees\n4. General information about the whole system"
                     #logic for going back
                 else:
@@ -201,7 +227,7 @@ def sms_reply():
                     user_session['second_menu'] = None  # Resetting the submenu indicator
 
                     # Reset the first menu indicator to the main menu
-                    user_session['first_menu'] = 'main'
+                    user_session['first_menu'] = None
                     reply = "Returning to the main menu\n1. Information regarding Products\n2. Information regarding Suppliers\n3. Information regarding Employees\n4. General information about the whole system"
 
                 else:
