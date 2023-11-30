@@ -15,6 +15,7 @@ def get_products():
         return None
     
 def get_product_id_by_name(product_name):
+    print("product_name receoved in the get_product_id_by_name functino is",product_name)
     if not product_name:
         return "Product name is required"
 
@@ -22,8 +23,10 @@ def get_product_id_by_name(product_name):
 
     try:
         response = requests.get(api_url)
+        print("response from get_product_id_by_name",response)
         if response.status_code == 200:
             product_id = response.json().get('_id')
+            print("printing product_id in get_product_id_by_name",product_id)
             return product_id if product_id else "Product not found"
         elif response.status_code == 404:
             return "Product not found"
@@ -177,7 +180,6 @@ def sms_reply():
         session.clear()
     user_phone = request.form.get('From')
     user_session = session.get(user_phone, {'first_time': True})
-    print("use_session after initial assignment: ",user_session)
     resp = MessagingResponse()
 
     if user_session['first_time']:
@@ -250,10 +252,7 @@ def sms_reply():
 
                     #call the api to get all the products
                 elif msg == '5':
-                    user_session['second_menu'] = None  # Resetting the submenu indicator
-
-                    # Reset the first menu indicator to None
-                    user_session['first_menu'] = None
+                    session.clear()
                     reply = "Returning to the main menu\n1. Information regarding Products\n2. Information regarding Suppliers\n3. Information regarding Employees\n4. General information about the whole system"
                     #delete all the first_menu, secon_menu and first_Time if necessary
                 else:
@@ -267,23 +266,24 @@ def sms_reply():
 
             else:
                 if second_menu == 'removeproduct':
-                        product_name = msg  # Assuming the message contains the name of the product to remove
-                product_id = get_product_id_by_name(product_name)
-                if isinstance(product_id, str):
-                    # Handle cases where product is not found or error occurred
-                    reply = product_id
-                else:
-                    # Call the API or method to remove the product using product_id
-                    result = delete_product(product_id)
-                    if result == "Product deleted successfully":
-                        reply = f"Product {product_name} removed successfully"
+                    
+                    product_name = msg  # Assuming the message contains the name of the product to remove
+                    product_id = get_product_id_by_name(product_name)
+                    if isinstance(product_id, str):
+                        # Handle cases where product is not found or error occurred
+                        reply = "Product does not exist"
                     else:
-                        reply = f"Failed to remove product: {result}"
-                user_session['second_menu'] = None  # Reset the second menu
-                user_session['first_menu'] = None  # Reset the first menu
-                session[user_phone] = user_session
-                resp.message(reply)
-                return str(resp)  
+                        # Call the API or method to remove the product using product_id
+                        result = delete_product(product_id)
+                        if result == "Product deleted successfully":
+                            reply = f"Product {product_name} removed successfully"
+                        else:
+                            reply = f"Failed to remove product: {result}"
+                    user_session['second_menu'] = None  # Reset the second menu
+                    user_session['first_menu'] = None  # Reset the first menu
+                    session[user_phone] = user_session
+                    resp.message(reply)
+                    return str(resp)  
 
         elif first_menu == 'suppliermenu':
             if not second_menu:
@@ -317,10 +317,7 @@ def sms_reply():
                     return str(resp)
                     #logic for getting the list of suppliers
                 elif msg == '5':
-                    user_session['second_menu'] = None  # Resetting the submenu indicator
-
-                    # Reset the first menu indicator to the main menu
-                    user_session['first_menu'] = None
+                    session.clear()
                     reply = "Returning to the main menu\n1. Information regarding Products\n2. Information regarding Suppliers\n3. Information regarding Employees\n4. General information about the whole system"
                     #logic for going back
                 else:
@@ -330,23 +327,23 @@ def sms_reply():
                 return str(resp)
             else:
                 if second_menu == 'removesupplier':
-                        supplier_name = msg  # Assuming the message contains the name of the supplier to remove
-                supplier_id = get_supplier_id_by_name(supplier_name)
-                if isinstance(supplier_id, str):
-                    # Handle cases where supplier is not found or error occurred
-                    reply = supplier_id
-                else:
-                    # Call the API or method to remove the supplier using supplier_id
-                    result = delete_supplier(supplier_id)
-                    if result == "Supplier deleted successfully":
-                        reply = f"Supplier {supplier_name} removed successfully"
+                    supplier_name = msg  # Assuming the message contains the name of the supplier to remove
+                    supplier_id = get_supplier_id_by_name(supplier_name)
+                    if isinstance(supplier_id, str):
+                        # Handle cases where supplier is not found or error occurred
+                        reply = supplier_id
                     else:
-                        reply = f"Failed to remove supplier: {result}"
-                user_session['second_menu'] = None  # Reset the second menu
-                user_session['first_menu'] = None  # Reset the first menu
-                session[user_phone] = user_session
-                resp.message(reply)
-                return str(resp)  
+                        # Call the API or method to remove the supplier using supplier_id
+                        result = delete_supplier(supplier_id)
+                        if result == "Supplier deleted successfully":
+                            reply = f"Supplier {supplier_name} removed successfully"
+                        else:
+                            reply = f"Failed to remove supplier: {result}"
+                    user_session['second_menu'] = None  # Reset the second menu
+                    user_session['first_menu'] = None  # Reset the first menu
+                    session[user_phone] = user_session
+                    resp.message(reply)
+                    return str(resp)  
 
                 
 
@@ -384,10 +381,7 @@ def sms_reply():
                     return str(resp)
                     
                 elif msg == '5':
-                    user_session['second_menu'] = None  # Resetting the submenu indicator
-
-                    # Reset the first menu indicator to the main menu
-                    user_session['first_menu'] = None
+                    session.clear()
                     reply = "Returning to the main menu\n1. Information regarding Products\n2. Information regarding Suppliers\n3. Information regarding Employees\n4. General information about the whole system"
 
                 else:
@@ -397,24 +391,24 @@ def sms_reply():
                 return str(resp)    
             else:
                 if second_menu == 'removeemployee':
-                        employee_name = msg  # Assuming the message contains the name of the employee to remove
-                employee_id = get_employee_id_by_name(employee_name)
-                if isinstance(employee_id, str):
-                    # Handle cases where employee is not found or error occurred
-                    reply = employee_id
-                else:
-                    # Call the API or method to remove the employee using employee_id
-                    result = delete_employee(employee_id)
-                    if result == "Employee deleted successfully":
-                        reply = f"Employee {employee_name} removed successfully"
+                    employee_name = msg  # Assuming the message contains the name of the employee to remove
+                    employee_id = get_employee_id_by_name(employee_name)
+                    if isinstance(employee_id, str):
+                        # Handle cases where employee is not found or error occurred
+                        reply = employee_id
                     else:
-                        reply = f"Failed to remove employee: {result}"
-                user_session['second_menu'] = None  # Reset the second menu
-                user_session['first_menu'] = None  # Reset the first menu
-                session[user_phone] = user_session
-                resp.message(reply)
-                return str(resp)  
-     
+                        # Call the API or method to remove the employee using employee_id
+                        result = delete_employee(employee_id)
+                        if result == "Employee deleted successfully":
+                            reply = f"Employee {employee_name} removed successfully"
+                        else:
+                            reply = f"Failed to remove employee: {result}"
+                    user_session['second_menu'] = None  # Reset the second menu
+                    user_session['first_menu'] = None  # Reset the first menu
+                    session[user_phone] = user_session
+                    resp.message(reply)
+                    return str(resp)  
+        
         
 
        
