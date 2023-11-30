@@ -175,8 +175,8 @@ def hello():
 def sms_reply():
     
     reply = "Welcome"  # Initializing with a default value
-    msg = request.form.get('Body').lower()
-    if msg=="reset":
+    msg = request.form.get('Body')
+    if msg.lower()=="reset":
         session.clear()
     user_phone = request.form.get('From')
     user_session = session.get(user_phone, {'first_time': True})
