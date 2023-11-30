@@ -82,7 +82,6 @@ def hello():
 
 @app.route("/sms", methods=['POST'])
 def sms_reply():
-    session.clear()
     reply = "Welcome"  # Initializing with a default value
     msg = request.form.get('Body').lower()
     user_phone = request.form.get('From')
@@ -196,13 +195,13 @@ def sms_reply():
                     reply = "List of Suppliers:\n"
                     
                     # Get supplier data
-                    products = get_suppliers()
-                    if products:
+                    suppliers = get_suppliers()
+                    if suppliers:
                         # Format product data as a string
-                        product_list = "\n\n".join([f"Name: {product['name']}\nDescription: {product['description']}\nPrice: {product['price']}" for product in products])
-                        resp.message(f"Suppliers are:\n{product_list}")
+                        supplier_list = "\n\n".join([f"Name: {supplier['name']}\nPhone: {supplier['phone']}\nAddress: {supplier['address']}" for supplier in suppliers])
+                        resp.message(f"Suppliers are:\n{supplier_list}")
                     else:
-                        resp.message("Failed to fetch product data")
+                        resp.message("Failed to fetch suppliers list")
                     
                     return str(resp)
                     #logic for getting the list of suppliers
@@ -241,6 +240,18 @@ def sms_reply():
                     # Handle editing an employee
                 elif msg == '4':
                     reply = "List of Employees:\n"
+                    
+                    
+                    # Get employees data
+                    employees = get_employees()
+                    if employees:
+                        # Format product data as a string
+                        employee_list = "\n\n".join([f"Name: {employee['name']}\nEmail: {employee['email']}\nPhone: {employee['phone']}" for employee in employees])
+                        resp.message(f"employees are:\n{employee_list}")
+                    else:
+                        resp.message("Failed to fetch employees list")
+                    
+                    return str(resp)
                     
                 elif msg == '5':
                     user_session['second_menu'] = None  # Resetting the submenu indicator
