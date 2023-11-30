@@ -13,6 +13,24 @@ def get_products():
         return response.json().get('allProducts')  # Extracting product data from the response
     else:
         return None
+    
+def get_product_id_by_name(product_name):
+    if not product_name:
+        return "Product name is required"
+
+    api_url = f"https://your-nextjs-app.vercel.app/api/productDetails?name={product_name}"
+
+    try:
+        response = requests.get(api_url)
+        if response.status_code == 200:
+            product_id = response.json().get('_id')
+            return product_id if product_id else "Product not found"
+        elif response.status_code == 404:
+            return "Product not found"
+        else:
+            return "Failed to fetch product details"
+    except requests.RequestException as e:
+        return f"Error: {str(e)}"    
 
 def add_product(name, price, category, quantity, sku, brand, unitOfMeasure, supplier, description):
     api_url = "https://inventory-website.vercel.app/api/product/addP"
@@ -64,6 +82,7 @@ def hello():
 
 @app.route("/sms", methods=['POST'])
 def sms_reply():
+    session.clear()
     reply = "Welcome"  # Initializing with a default value
     msg = request.form.get('Body').lower()
     user_phone = request.form.get('From')
