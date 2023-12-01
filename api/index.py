@@ -84,6 +84,7 @@ def get_product_details_by_id(product_id):
         response = requests.get(api_url)
         if response.status_code == 200:
             product_details = response.json().get('product')
+            print("product details are: ",product_details)
             return product_details if product_details else "Product details not found"
         elif response.status_code == 404:
             return "Product not found"
@@ -323,6 +324,7 @@ def sms_reply():
                             reply="Product ID is required"
                         else:
                             product_details = result.get('product')
+                            print("result",result)
                             print("product_details",product_details)
                             if product_details:
                                 # Format the product details into a reply message
