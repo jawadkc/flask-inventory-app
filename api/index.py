@@ -15,7 +15,6 @@ def get_products():
         return None
     
 def get_product_id_by_name(product_name):
-    print("product_name receoved in the get_product_id_by_name functino is",product_name)
     if not product_name:
         return "Product name is required"
 
@@ -23,10 +22,8 @@ def get_product_id_by_name(product_name):
 
     try:
         response = requests.get(api_url)
-        print("response from get_product_id_by_name",response)
         if response.status_code == 200:
             product_id = response.json().get('_id')
-            print("printing product_id in get_product_id_by_name",product_id)
             return product_id if product_id else "Product not found"
         elif response.status_code == 404:
             return "Product not found"
@@ -253,6 +250,9 @@ def sms_reply():
                     #call the api to get all the products
                 elif msg == '5':
                     session.clear()
+                    user_session['second_menu'] = None  # Reset the second menu
+                    user_session['first_menu'] = None  # Reset the first menu
+    
                     reply = "Returning to the main menu\n1. Information regarding Products\n2. Information regarding Suppliers\n3. Information regarding Employees\n4. General information about the whole system"
                     #delete all the first_menu, secon_menu and first_Time if necessary
                 else:
@@ -269,12 +269,12 @@ def sms_reply():
                     
                     product_name = msg  # Assuming the message contains the name of the product to remove
                     product_id = get_product_id_by_name(product_name)
-                    if isinstance(product_id, str):
+                    if product_id=="Product not found":
                         # Handle cases where product is not found or error occurred
                         reply = "Product does not exist"
                     else:
                         # Call the API or method to remove the product using product_id
-                        result = delete_product(product_id)
+                        result = delete_product(str(product_id))
                         if result == "Product deleted successfully":
                             reply = f"Product {product_name} removed successfully"
                         else:
@@ -318,6 +318,8 @@ def sms_reply():
                     #logic for getting the list of suppliers
                 elif msg == '5':
                     session.clear()
+                    user_session['second_menu'] = None  # Reset the second menu
+                    user_session['first_menu'] = None  # Reset the first menu
                     reply = "Returning to the main menu\n1. Information regarding Products\n2. Information regarding Suppliers\n3. Information regarding Employees\n4. General information about the whole system"
                     #logic for going back
                 else:
@@ -382,6 +384,8 @@ def sms_reply():
                     
                 elif msg == '5':
                     session.clear()
+                    user_session['second_menu'] = None  # Reset the second menu
+                    user_session['first_menu'] = None  # Reset the first menu
                     reply = "Returning to the main menu\n1. Information regarding Products\n2. Information regarding Suppliers\n3. Information regarding Employees\n4. General information about the whole system"
 
                 else:
