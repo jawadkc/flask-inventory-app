@@ -208,7 +208,6 @@ def sms_reply():
     else:
         first_menu = user_session.get('first_menu')
         second_menu = user_session.get('second_menu')
-        print("first_menu,second_menu",first_menu,second_menu)
         
         if not first_menu:
             if msg == '1':
@@ -252,12 +251,12 @@ def sms_reply():
                     second_menu = 'editproduct'
                     reply = "Please provide the name of the product you want to edit"
                     # Handle editing a product
-                elif msg == '4':
+                elif msg == '5':
                     user_session['second_menu'] = 'viewproduct'
                     second_menu = 'viewproduct'
                     reply = "Please provide the name of the product you want to see details of"
                     # Handle editing a product    
-                elif msg == '5':
+                elif msg == '4':
                     reply = "List of Products:\n"
                     # Get product data
                     products = get_products()
@@ -324,7 +323,7 @@ def sms_reply():
                             reply="Product ID is required"
                         else:
                             product_details = result.get('product')
-
+                            print("product_details",product_details)
                             if product_details:
                                 # Format the product details into a reply message
                                 reply = f"Product Details:\nName: {product_details.get('name')}\nDescription: {product_details.get('description')}\nPrice: {product_details.get('price')}"
