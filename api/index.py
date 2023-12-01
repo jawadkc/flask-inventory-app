@@ -323,15 +323,12 @@ def sms_reply():
                         elif result=="Product ID is required":
                             reply="Product ID is required"
                         else:
-                            product_details = result.get('product')
-                            print("result",result)
-                            print("product_details",product_details)
-                            if product_details:
-                                # Format the product details into a reply message
-                                reply = f"Product Details:\nName: {product_details.get('name')}\nDescription: {product_details.get('description')}\nPrice: {product_details.get('price')}"
-                                # Include other details as needed in a similar format
-                            else:
-                                reply = "Product details not available"
+                             # Parse the details received in the result
+                            product_details = result
+
+                             # Format the product details into a reply message
+                            reply = f"Product Details:\nName: {product_details['name']}\nDescription: {product_details['description']}\nPrice: {product_details['price']}"
+           
                     user_session['second_menu'] = None  # Reset the second menu
                     user_session['first_menu'] = None  # Reset the first menu
                     session[user_phone] = user_session
