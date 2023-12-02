@@ -1,188 +1,17 @@
 from flask import Flask, request,session
-import requests
 from twilio.twiml.messaging_response import MessagingResponse
+
+
+from utils.product_utils import get_products, get_product_id_by_name, add_product, delete_product, get_product_details_by_id
+from utils.supplier_utils import get_suppliers, get_supplier_id_by_name, delete_supplier, get_supplier_details_by_id
+from utils.employee_utils import get_employees, get_employee_id_by_name, delete_employee , get_employee_details_by_id
+
+
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'mysecretkeyjuni'
 
-def get_products():
-    # Make a GET request to the API endpoint that provides product data
-    response = requests.get('https://inventory-website.vercel.app/api/product/getPs')
-
-    if response.status_code == 200:
-        return response.json().get('allProducts')  # Extracting product data from the response
-    else:
-        return None
     
-def get_product_id_by_name(product_name):
-    if not product_name:
-        return "Product name is required"
-
-    api_url = f"https://inventory-website.vercel.app/api/product/getId?name={product_name}"
-
-    try:
-        response = requests.get(api_url)
-        if response.status_code == 200:
-            product_id = response.json().get('_id')
-            return product_id if product_id else "Product not found"
-        elif response.status_code == 404:
-            return "Product not found"
-        else:
-            return "Failed to fetch product details"
-    except requests.RequestException as e:
-        return f"Error: {str(e)}"    
-
-def add_product(name, price, category, quantity, sku, brand, unitOfMeasure, supplier, description):
-    api_url = "https://inventory-website.vercel.app/api/product/addP"
-    
-    form_data = {
-        "name": name,
-        "price": price,
-        "category": category,
-        "quantity": quantity,
-        "sku": sku,
-        "brand": brand,
-        "unitOfMeasure": unitOfMeasure,
-        "supplier": supplier,
-        "description": description
-    }
-
-    try:
-        response = requests.post(api_url, json=form_data)
-        if response.status_code == 200:
-            return "Product added successfully"  # Or any success message
-        else:
-            return "Failed to add product"  # Or any error message based on response
-
-    except requests.RequestException as e:
-        return f"Error: {str(e)}"  # Handle any exception that occurred during the request
-
-
-def delete_product(product_id):
-    api_url = f"https://inventory-website.vercel.app/api/product/deleteP"
-    payload = {"productId": product_id}
-
-    try:
-        response = requests.delete(api_url, json=payload)
-        if response.status_code == 200:
-            return "Product deleted successfully"
-        elif response.status_code == 404:
-            return "Product not found"
-        else:
-            return "Failed to delete product"
-    except requests.RequestException as e:
-        return f"Error: {str(e)}"
-
-
-def get_product_details_by_id(product_id):
-    if not product_id:
-        return "Product ID is required"
-
-    api_url = f"https://inventory-website.vercel.app/api/product/getP?id={product_id}"
-
-    try:
-        response = requests.get(api_url)
-        if response.status_code == 200:
-            product_details = response.json().get('product')
-            print("product details are: ",product_details)
-            return product_details if product_details else "Product details not found"
-        elif response.status_code == 404:
-            return "Product not found"
-        else:
-            return "Failed to fetch product details"
-    except requests.RequestException as e:
-        return f"Error: {str(e)}"    
-
-def get_suppliers():
-    # Make a GET request to the API endpoint that provides supplier data
-    response = requests.get('https://inventory-website.vercel.app/api/supplier/getSs')
-
-    if response.status_code == 200:
-        return response.json().get('allSuppliers')  # Extracting product data from the response
-    else:
-        return None  
-
-
-def get_supplier_id_by_name(supplier_name):
-    if not supplier_name:
-        return "Supplier name is required"
-
-    api_url = f"https://inventory-website.vercel.app/api/supplier/getId?name={supplier_name}"
-
-    try:
-        response = requests.get(api_url)
-        if response.status_code == 200:
-            supplier_id = response.json().get('_id')
-            return supplier_id if supplier_id else "Supplier not found"
-        elif response.status_code == 404:
-            return "Supplier not found"
-        else:
-            return "Failed to fetch supplier details"
-    except requests.RequestException as e:
-        return f"Error: {str(e)}"
-
-def delete_supplier(supplier_id):
-    api_url = f"https://inventory-website.vercel.app/api/supplier/deleteS"
-    payload = {"supplierId": supplier_id}
-
-    try:
-        response = requests.delete(api_url, json=payload)
-        if response.status_code == 200:
-            return "Supplier deleted successfully"
-        elif response.status_code == 404:
-            return "Supplier not found"
-        else:
-            return "Failed to delete supplier"
-    except requests.RequestException as e:
-        return f"Error: {str(e)}"
-    
-
-
-
-def get_employees():
-    # Make a GET request to the API endpoint that provides employee data
-    response = requests.get('https://inventory-website.vercel.app/api/employee/getEs')
-
-    if response.status_code == 200:
-        return response.json().get('allEmployees')  # Extracting product data from the response
-    else:
-        return None      
-
-
-def get_employee_id_by_name(employee_name):
-    if not employee_name:
-        return "Employee name is required"
-
-    api_url = f"https://inventory-website.vercel.app/api/employee/getId?name={employee_name}"
-
-    try:
-        response = requests.get(api_url)
-        if response.status_code == 200:
-            employee_id = response.json().get('_id')
-            return employee_id if employee_id else "Employee not found"
-        elif response.status_code == 404:
-            return "Employee not found"
-        else:
-            return "Failed to fetch employee details"
-    except requests.RequestException as e:
-        return f"Error: {str(e)}"
-
-def delete_employee(employee_id):
-    api_url = f"https://inventory-website.vercel.app/api/employee/deleteS"
-    payload = {"employeeId": employee_id}
-
-    try:
-        response = requests.delete(api_url, json=payload)
-        if response.status_code == 200:
-            return "Employee deleted successfully"
-        elif response.status_code == 404:
-            return "Employee not found"
-        else:
-            return "Failed to delete employee"
-    except requests.RequestException as e:
-        return f"Error: {str(e)}"
-   
-
 @app.route("/")
 def hello():
     return "Welcome to the Inventory Management Website"
@@ -397,7 +226,34 @@ def sms_reply():
                     session[user_phone] = user_session
                     resp.message(reply)
                     return str(resp)  
+                elif second_menu == 'viewsupplier':
+                    supplier_name = msg  # Assuming the message contains the name of the supplier to remove
+                    product_id = get_supplier_id_by_name(supplier_name)
+                    if supplier_id=="Supplier not found":
+                        # Handle cases where supplier is not found or error occurred
+                        reply = "Supplier does not exist"
+                    else:
+                        # Call the API or method to remove the supplier using supplier_id
+                        result = get_supplier_details_by_id(str(supplier_id))
+                        if result == "Supplier not found":
+                            reply = "Supplier not found"
+                        elif result=="Supplier details not found":
+                            reply = "Supplier details not found"
+                        elif result=="Supplier ID is required":
+                            reply="Supplier ID is required"
+                        else:
+                             # Parse the details received in the result
+                            supplier_details = result
 
+                             # Format the Supplier details into a reply message
+                            reply = f"Supplier Details:\nName: {supplier_details['name']}\nAddress: {supplier_details['address']}\nEmail: {supplier_details['email']}"
+           
+                    user_session['second_menu'] = None  # Reset the second menu
+                    user_session['first_menu'] = None  # Reset the first menu
+                    session[user_phone] = user_session
+                    resp.message(reply)
+                    return str(resp)
+                    
                 
 
         elif first_menu == 'employeemenu':
@@ -463,6 +319,35 @@ def sms_reply():
                     session[user_phone] = user_session
                     resp.message(reply)
                     return str(resp)  
+                elif second_menu == 'viewemployee':
+                    employee_name = msg  # Assuming the message contains the name of the employee to remove
+                    employee_id = get_employee_id_by_name(employee_name)
+                    if employee_id=="Employee not found":
+                        # Handle cases where Employee is not found or error occurred
+                        reply = "Employee does not exist"
+                    else:
+                        # Call the API or method to remove the Employee using Employee_id
+                        result = get_employee_details_by_id(str(employee_id))
+                        if result == "Employee not found":
+                            reply = "Employee not found"
+                        elif result=="Employee details not found":
+                            reply = "Employee details not found"
+                        elif result=="Employee ID is required":
+                            reply="Employee ID is required"
+                        else:
+                             # Parse the details received in the result
+                            employee_details = result
+
+                             # Format the Supplier details into a reply message
+                            reply = f"Supplier Details:\nName: {employee_details['name']}\nAddress: {employee_details['address']}\nEmail: {employee_details['email']}"
+           
+                    user_session['second_menu'] = None  # Reset the second menu
+                    user_session['first_menu'] = None  # Reset the first menu
+                    session[user_phone] = user_session
+                    resp.message(reply)
+                    return str(resp)
+                    
+                
         
         
 
