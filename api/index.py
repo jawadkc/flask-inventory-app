@@ -49,12 +49,12 @@ def sms_reply():
             elif msg == '2':
                 user_session['first_menu'] = 'suppliermenu'
                 first_menu = 'suppliermenu'
-                reply = "1. Add a supplier\n2. Remove a supplier\n3. Edit a supplier\n4. Show all the suppliers\n5. Return to the main menu"
+                reply = "1. Add a supplier\n2. Remove a supplier\n3. Edit a supplier\n4. Show all the suppliers\n5. Get supplier by name\n6. Return to the main menu"
 
             elif msg == '3':
                 user_session['first_menu'] = 'employeemenu'
                 first_menu = 'employeemenu'
-                reply = "1. Add an employee\n2. Remove an employee\n3. Edit an employee\n4. Show all the employees\n5. Return to the main menu"
+                reply = "1. Add an employee\n2. Remove an employee\n3. Edit an employee\n4. Show all the employees\n5. Get employee by name\n6. Return to the main menu"
 
             else:
                 reply = "Invalid option selected"
@@ -188,7 +188,7 @@ def sms_reply():
                     # Get supplier data
                     suppliers = get_suppliers()
                     if suppliers:
-                        # Format product data as a string
+                        # Format supplier data as a string
                         supplier_list = "\n\n".join([f"Name: {supplier['name']}\nPhone: {supplier['phone']}\nAddress: {supplier['address']}" for supplier in suppliers])
                         resp.message(f"Suppliers are:\n{supplier_list}")
                     else:
@@ -197,6 +197,11 @@ def sms_reply():
                     return str(resp)
                     #logic for getting the list of suppliers
                 elif msg == '5':
+                    user_session['second_menu'] = 'viewsupplier'
+                    second_menu = 'viewsupplier'
+                    reply = "Please provide the name of the supplier you want to see details of"
+                     
+                elif msg == '6':
                     session.clear()
                     user_session['second_menu'] = None  # Reset the second menu
                     user_session['first_menu'] = None  # Reset the first menu
@@ -288,8 +293,12 @@ def sms_reply():
                         resp.message("Failed to fetch employees list")
                     
                     return str(resp)
-                    
                 elif msg == '5':
+                    user_session['second_menu'] = 'viewemployee'
+                    second_menu = 'viewemployee'
+                    reply = "Please provide the name of the employee you want to see details of"
+                   
+                elif msg == '6':
                     session.clear()
                     user_session['second_menu'] = None  # Reset the second menu
                     user_session['first_menu'] = None  # Reset the first menu
