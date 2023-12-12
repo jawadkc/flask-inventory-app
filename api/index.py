@@ -67,7 +67,7 @@ def sms_reply():
             if not second_menu:
                 # Handle product menu options
                 if msg == '1':
-                    print("add product is selected")
+                    
                     user_session['second_menu'] = 'addproduct'
                     second_menu = 'addproduct'
                     reply = "Please provide details of the product in the format:\nname,description,price,quantity,unitOfMeasure,category,brand,sku"
@@ -163,7 +163,13 @@ def sms_reply():
                     session[user_phone] = user_session
                     resp.message(reply)
                     return str(resp)
+                elif second_menu == 'addproduct':
+                    product_details = msg
+                    name, description, price, quantity, unitOfMeasure, category, brand, sku, supplierName = product_details.split(",")
+                    supplier=str(get_supplier_id_by_name(supplierName ))
+                    add_product(name, price, category, quantity, sku, brand, unitOfMeasure, supplier, description)
                     
+                       
 
         elif first_menu == 'suppliermenu':
             if not second_menu:

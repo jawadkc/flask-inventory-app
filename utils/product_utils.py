@@ -85,4 +85,3 @@ def get_product_details_by_id(product_id):
             return "Failed to fetch product details"
     except requests.RequestException as e:
         return f"Error: {str(e)}"    
-
