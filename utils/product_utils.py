@@ -87,3 +87,23 @@ def get_product_details_by_id(product_id):
             return "Failed to fetch product details"
     except requests.RequestException as e:
         return f"Error: {str(e)}"    
+
+def edit_product(id,updatedProduct):
+    api_url = "https://inventory-website.vercel.app/api/product/updateP"
+    
+    form_data = {
+        "productId": id,
+        "updatedProduct": updatedProduct
+    }
+
+    try:
+        response = requests.put(api_url, json=form_data)
+        if response.status_code == 200:
+            return "Product edited successfully"  # Or any success message
+        else:
+            print("Failed to edi product")
+            print("Response is: ",response)
+            return "Failed to edit product"  # Or any error message based on response
+
+    except requests.RequestException as e:
+        return f"Error: {str(e)}"  # Handle any exception that occurred during the request

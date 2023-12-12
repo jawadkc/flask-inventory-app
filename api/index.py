@@ -2,8 +2,8 @@ from flask import Flask, request,session
 from twilio.twiml.messaging_response import MessagingResponse
 
 
-from utils.product_utils import get_products, get_product_id_by_name, add_product, delete_product, get_product_details_by_id
-from utils.supplier_utils import get_suppliers, get_supplier_id_by_name, delete_supplier, get_supplier_details_by_id, add_supplier
+from utils.product_utils import get_products, get_product_id_by_name, add_product, delete_product, get_product_details_by_id, edit_product
+from utils.supplier_utils import get_suppliers, get_supplier_id_by_name, delete_supplier, get_supplier_details_by_id, add_supplier, edit_supplier
 from utils.employee_utils import get_employees, get_employee_id_by_name, delete_employee , get_employee_details_by_id, add_employee
 
 
@@ -78,7 +78,7 @@ def sms_reply():
                 elif msg == '3':
                     user_session['second_menu'] = 'editproduct'
                     second_menu = 'editproduct'
-                    reply = "Please provide the name of the product you want to edit"
+                    reply = "Please provide the name of the product followed by item name:value you want to change in the below format\nProduct Name,item name,new value"
                     # Handle editing a product
                 elif msg == '5':
                     user_session['second_menu'] = 'viewproduct'
@@ -174,6 +174,37 @@ def sms_reply():
                     session[user_phone] = user_session
                     resp.message(reply)
                     return str(resp)
+                elif second_menu=="editproduct":
+                    product_Name,item_name,new_value=msg.split(",")
+                    product_Id = get_product_id_by_name(product_Name)
+                    if product_Id=="Product not found":
+                        # Handle cases where product is not found or error occurred
+                        reply = "Product does not exist"
+                    else:
+                        # Call the API or method to remove the product using product_id
+                        result = get_product_details_by_id(str(product_Id))
+                        if result == "Product not found":
+                            reply = "Product not found"
+                        elif result=="Product details not found":
+                            reply = "Product details not found"
+                        elif result=="Product ID is required":
+                            reply="Product ID is required"
+                        else:
+                             # Parse the details received in the result
+                            product_details = result
+                            product_details[item_name]=new_value
+                            edit_product(product_details['_id'],product_details)
+                             # Format the product details into a reply message
+                            reply = f"Product Details:\nName: {product_details['name']}\nDescription: {product_details['description']}\nPrice: {product_details['price']}"
+           
+                    user_session['second_menu'] = None  # Reset the second menu
+                    user_session['first_menu'] = None  # Reset the first menu
+                    session[user_phone] = user_session
+                    resp.message(reply)
+                    return str(resp)
+                    
+                    
+                    
                     
                        
 
@@ -192,7 +223,7 @@ def sms_reply():
                 elif msg == '3':
                     user_session['second_menu'] = 'editsupplier'
                     second_menu = 'editsupplier'
-                    reply = "Please provide the name of the supplier you want to edit"
+                    reply = "Please provide the name of the supplier followed by item name:value you want to change in the below format\nSupplier Name,item name,new value"
                     # Handle editing a supplier
                 elif msg == '4':
                     reply = "List of Suppliers:\n"
@@ -280,6 +311,34 @@ def sms_reply():
                     session[user_phone] = user_session
                     resp.message(reply)
                     return str(resp)
+                elif second_menu=="editsupplier":
+                    supplier_Name,item_name,new_value=msg.split(",")
+                    supplier_Id = get_supplier_id_by_name(supplier_Name)
+                    if supplier_Id=="Supplier not found":
+                        # Handle cases where supplier is not found or error occurred
+                        reply = "Supplier does not exist"
+                    else:
+                        # Call the API or method to remove the supplier using supplier_id
+                        result = get_supplier_details_by_id(str(supplier_Id))
+                        if result == "Supplier not found":
+                            reply = "Supplier not found"
+                        elif result=="Supplier details not found":
+                            reply = "Supplier details not found"
+                        elif result=="Supplier ID is required":
+                            reply="Supplier ID is required"
+                        else:
+                             # Parse the details received in the result
+                            supplier_details = result
+                            supplier_details[item_name]=new_value
+                            reply =edit_supplier(supplier_details['_id'],supplier_details)
+           
+                    user_session['second_menu'] = None  # Reset the second menu
+                    user_session['first_menu'] = None  # Reset the first menu
+                    session[user_phone] = user_session
+                    resp.message(reply)
+                    return str(resp)
+                    
+                
                     
                 
 
@@ -299,7 +358,7 @@ def sms_reply():
                 elif msg == '3':
                     user_session['second_menu'] = 'editemployee'
                     second_menu = 'editemployee'
-                    reply = "Please provide the name of the employee you want to edit"
+                    reply = "Please provide the name of the employee followed by item name:value you want to change in the below format\nEmployee Name,item name,new value"
                     # Handle editing an employee
                 elif msg == '4':
                     reply = "List of Employees:\n"

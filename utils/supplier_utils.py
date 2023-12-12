@@ -82,3 +82,23 @@ def add_supplier(name, contactPerson, email, phone, address):
 
     except requests.RequestException as e:
         return f"Error: {str(e)}" 
+
+def edit_supplier(id,updatedSupplier):
+    api_url = "https://inventory-website.vercel.app/api/supplier/updateS"
+    
+    form_data = {
+        "supplierId": id,
+        "updatedSupplier": updatedSupplier
+    }
+
+    try:
+        response = requests.put(api_url, json=form_data)
+        if response.status_code == 200:
+            return "Supplier edited successfully"  # Or any success message
+        else:
+            print("Failed to edi supplier")
+            print("Response is: ",response)
+            return "Failed to edit supplier"  # Or any error message based on response
+
+    except requests.RequestException as e:
+        return f"Error: {str(e)}"  # Handle any exception that occurred during the request
