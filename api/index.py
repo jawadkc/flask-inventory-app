@@ -70,7 +70,7 @@ def sms_reply():
                     
                     user_session['second_menu'] = 'addproduct'
                     second_menu = 'addproduct'
-                    reply = "Please provide details of the product in the format:\nname,description,price,quantity,unitOfMeasure,category,brand,sku"
+                    reply = "Please provide details of the product in the format:\nname,description,price,quantity,unitOfMeasure,category,brand,sku,supplierName"
                 elif msg == '2':
                     user_session['second_menu'] = 'removeproduct'
                     second_menu = 'removeproduct'
@@ -167,7 +167,14 @@ def sms_reply():
                     product_details = msg
                     name, description, price, quantity, unitOfMeasure, category, brand, sku, supplierName = product_details.split(",")
                     supplier=str(get_supplier_id_by_name(supplierName ))
-                    add_product(name, price, category, quantity, sku, brand, unitOfMeasure, supplier, description)
+                    print(name, description, price, quantity, unitOfMeasure, category, brand, sku, supplierName)
+                    reply = add_product(name, price, category, quantity, sku, brand, unitOfMeasure, supplier, description)
+                    print(reply)
+                    user_session['second_menu'] = None  # Reset the second menu
+                    user_session['first_menu'] = None  # Reset the first menu
+                    session[user_phone] = user_session
+                    resp.message(reply)
+                    return str(resp)
                     
                        
 

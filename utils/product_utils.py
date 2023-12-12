@@ -47,6 +47,7 @@ def add_product(name, price, category, quantity, sku, brand, unitOfMeasure, supp
         if response.status_code == 200:
             return "Product added successfully"  # Or any success message
         else:
+            print("Failed to add product")
             return "Failed to add product"  # Or any error message based on response
 
     except requests.RequestException as e:
