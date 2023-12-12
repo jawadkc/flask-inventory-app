@@ -59,3 +59,32 @@ def get_employee_details_by_id(employee_id):
             return "Failed to fetch employee details"
     except requests.RequestException as e:
         return f"Error: {str(e)}"    
+
+def add_employee(name, email, phone, address ,position, hireDate,salary,workingHours,status):
+    api_url = "https://inventory-website.vercel.app/api/employee/addE"
+    
+    form_data = {
+        "name": name,
+        "email": email,
+        "phone": phone,
+        "address": address,
+        "position": position,
+        "hireDate": hireDate,
+        "salary": salary,
+        "workingHours": workingHours,
+        "status": status
+    }
+
+    try:
+        response = requests.post(api_url, json=form_data)
+        if response.status_code == 200:
+            return "Employee added successfully"  
+        else:
+            
+            print("Response is: ",response)
+            return "Failed to add employee" 
+
+    except requests.RequestException as e:
+        return f"Error: {str(e)}" 
+    
+    

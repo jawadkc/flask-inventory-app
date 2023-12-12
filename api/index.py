@@ -3,8 +3,8 @@ from twilio.twiml.messaging_response import MessagingResponse
 
 
 from utils.product_utils import get_products, get_product_id_by_name, add_product, delete_product, get_product_details_by_id
-from utils.supplier_utils import get_suppliers, get_supplier_id_by_name, delete_supplier, get_supplier_details_by_id
-from utils.employee_utils import get_employees, get_employee_id_by_name, delete_employee , get_employee_details_by_id
+from utils.supplier_utils import get_suppliers, get_supplier_id_by_name, delete_supplier, get_supplier_details_by_id, add_supplier
+from utils.employee_utils import get_employees, get_employee_id_by_name, delete_employee , get_employee_details_by_id, add_employee
 
 
 
@@ -66,8 +66,7 @@ def sms_reply():
         if first_menu == 'productmenu':
             if not second_menu:
                 # Handle product menu options
-                if msg == '1':
-                    
+                if msg == '1': 
                     user_session['second_menu'] = 'addproduct'
                     second_menu = 'addproduct'
                     reply = "Please provide details of the product in the format:\nname,description,price,quantity,unitOfMeasure,category,brand,sku,supplierName"
@@ -271,6 +270,16 @@ def sms_reply():
                     session[user_phone] = user_session
                     resp.message(reply)
                     return str(resp)
+                elif second_menu=="addsupplier":
+                    supplier_details = msg
+                    name,contactPerson,email,phone,address = supplier_details.split(",")
+                    reply = add_supplier(name,contactPerson,email,phone,address)
+                    print(reply)
+                    user_session['second_menu'] = None  # Reset the second menu
+                    user_session['first_menu'] = None  # Reset the first menu
+                    session[user_phone] = user_session
+                    resp.message(reply)
+                    return str(resp)
                     
                 
 
@@ -280,7 +289,7 @@ def sms_reply():
                 if msg == '1':
                     user_session['second_menu'] = 'addemployee'
                     second_menu = 'addemployee'
-                    reply = "Please provide details of the employee in the format:\nname,email,phone,address,position,hireDate,salary,workingHours,status"
+                    reply = "Please provide details of the employee in the format:\nname,email,phone,address,position,hireDate(YYYY-MM-DDTHH:mm:ss.sssZ),salary,workingHours,status"
 
                 elif msg == '2':
                     user_session['second_menu'] = 'removeemployee'
@@ -294,8 +303,6 @@ def sms_reply():
                     # Handle editing an employee
                 elif msg == '4':
                     reply = "List of Employees:\n"
-                    
-                    
                     # Get employees data
                     employees = get_employees()
                     if employees:
@@ -363,6 +370,16 @@ def sms_reply():
                              # Format the Supplier details into a reply message
                             reply = f"Supplier Details:\nName: {employee_details['name']}\nAddress: {employee_details['address']}\nEmail: {employee_details['email']}"
            
+                    user_session['second_menu'] = None  # Reset the second menu
+                    user_session['first_menu'] = None  # Reset the first menu
+                    session[user_phone] = user_session
+                    resp.message(reply)
+                    return str(resp)
+                elif second_menu=="addemployee":
+                    employee_details = msg
+                    name,email,phone,address,position,hireDate,salary,workingHours,status = employee_details.split(",")
+                    reply = add_employee(name,email,phone,address,position,hireDate,salary,workingHours,status)
+                    print(reply)
                     user_session['second_menu'] = None  # Reset the second menu
                     user_session['first_menu'] = None  # Reset the first menu
                     session[user_phone] = user_session

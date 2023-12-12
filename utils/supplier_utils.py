@@ -59,3 +59,26 @@ def get_supplier_details_by_id(supplier_id):
             return "Failed to fetch supplier details"
     except requests.RequestException as e:
         return f"Error: {str(e)}"    
+
+def add_supplier(name, contactPerson, email, phone, address):
+    api_url = "https://inventory-website.vercel.app/api/supplier/addS"
+    
+    form_data = {
+        "name": name,
+        "contactPerson": contactPerson,
+        "email": email,
+        "phone": phone,
+        "address": address
+    }
+
+    try:
+        response = requests.post(api_url, json=form_data)
+        if response.status_code == 200:
+            return "Supplier added successfully"  
+        else:
+            
+            print("Response is: ",response)
+            return "Failed to add supplier" 
+
+    except requests.RequestException as e:
+        return f"Error: {str(e)}" 
