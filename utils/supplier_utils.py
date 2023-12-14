@@ -96,7 +96,7 @@ def edit_supplier(id,updatedSupplier):
         if response.status_code == 200:
             return "Supplier edited successfully"  # Or any success message
         else:
-            print("Failed to edi supplier")
+            print("Failed to edit supplier")
             print("Response is: ",response)
             return "Failed to edit supplier"  # Or any error message based on response
 

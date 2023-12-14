@@ -87,4 +87,23 @@ def add_employee(name, email, phone, address ,position, hireDate,salary,workingH
     except requests.RequestException as e:
         return f"Error: {str(e)}" 
     
+
+def edit_employee(id,updatedEmployee):
+    api_url = "https://inventory-website.vercel.app/api/employee/updateE"
     
+    form_data = {
+        "employeeId": id,
+        "updatedEmployee": updatedEmployee
+    }
+
+    try:
+        response = requests.put(api_url, json=form_data)
+        if response.status_code == 200:
+            return "Employee edited successfully"  # Or any success message
+        else:
+            print("Failed to edit employee")
+            print("Response is: ",response)
+            return "Failed to edit employee"  # Or any error message based on response
+
+    except requests.RequestException as e:
+        return f"Error: {str(e)}"  # Handle any exception that occurred during the request

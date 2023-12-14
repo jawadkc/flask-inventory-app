@@ -4,7 +4,7 @@ from twilio.twiml.messaging_response import MessagingResponse
 
 from utils.product_utils import get_products, get_product_id_by_name, add_product, delete_product, get_product_details_by_id, edit_product
 from utils.supplier_utils import get_suppliers, get_supplier_id_by_name, delete_supplier, get_supplier_details_by_id, add_supplier, edit_supplier
-from utils.employee_utils import get_employees, get_employee_id_by_name, delete_employee , get_employee_details_by_id, add_employee
+from utils.employee_utils import get_employees, get_employee_id_by_name, delete_employee , get_employee_details_by_id, add_employee, edit_employee
 
 
 
@@ -56,6 +56,12 @@ def sms_reply():
                 first_menu = 'employeemenu'
                 reply = "1. Add an employee\n2. Remove an employee\n3. Edit an employee\n4. Show all the employees\n5. Get employee by name\n6. Return to the main menu"
 
+            elif msg == '5':
+                user_session['first_menu'] = 'general'
+                first_menu = 'general'
+                reply = "What's your question? Free feel to ask any question related to Inventory Management System"
+
+     
             else:
                 reply = "Invalid option selected"
             session[user_phone] = user_session
@@ -440,6 +446,32 @@ def sms_reply():
                     name,email,phone,address,position,hireDate,salary,workingHours,status = employee_details.split(",")
                     reply = add_employee(name,email,phone,address,position,hireDate,salary,workingHours,status)
                     print(reply)
+                    user_session['second_menu'] = None  # Reset the second menu
+                    user_session['first_menu'] = None  # Reset the first menu
+                    session[user_phone] = user_session
+                    resp.message(reply)
+                    return str(resp)
+                elif second_menu=="editemployee":
+                    employee_Name,item_name,new_value=msg.split(",")
+                    employee_Id = get_employee_id_by_name(employee_Name)
+                    if employee_Id=="Employeer not found":
+                        # Handle cases where employee is not found or error occurred
+                        reply = "Employee does not exist"
+                    else:
+                        # Call the API or method to remove the employee using employee_id
+                        result = get_employee_details_by_id(str(employee_Id))
+                        if result == "Employee not found":
+                            reply = "Employee not found"
+                        elif result=="Employee details not found":
+                            reply = "Employee details not found"
+                        elif result=="Employee ID is required":
+                            reply="Employee ID is required"
+                        else:
+                             # Parse the details received in the result
+                            employee_details = result
+                            employee_details[item_name]=new_value
+                            reply =edit_employee(employee_details['_id'],employee_details)
+           
                     user_session['second_menu'] = None  # Reset the second menu
                     user_session['first_menu'] = None  # Reset the first menu
                     session[user_phone] = user_session
