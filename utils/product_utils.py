@@ -101,7 +101,7 @@ def edit_product(id,updatedProduct):
         if response.status_code == 200:
             return "Product edited successfully"  # Or any success message
         else:
-            print("Failed to edi product")
+            print("Failed to edit product")
             print("Response is: ",response)
             return "Failed to edit product"  # Or any error message based on response
 

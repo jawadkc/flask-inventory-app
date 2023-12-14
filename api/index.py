@@ -193,9 +193,10 @@ def sms_reply():
                              # Parse the details received in the result
                             product_details = result
                             product_details[item_name]=new_value
-                            edit_product(product_details['_id'],product_details)
+                            print("product details from edit product are",product_details)
+                            edit_response = edit_product(product_details['_id'],product_details)
                              # Format the product details into a reply message
-                            reply = f"Product Details:\nName: {product_details['name']}\nDescription: {product_details['description']}\nPrice: {product_details['price']}"
+                            reply = edit_response
            
                     user_session['second_menu'] = None  # Reset the second menu
                     user_session['first_menu'] = None  # Reset the first menu
