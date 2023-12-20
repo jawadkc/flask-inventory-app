@@ -29,7 +29,7 @@ def sms_reply():
 
     if user_session['first_time']:
         reply = "Welcome to the Inventory Management Website\n1. Information regarding Products\n2. Information regarding Suppliers\n3. Information regarding Employees\n4. Type reset to reset\n5. General information about the whole system"
-        print("reply in first_time",reply)
+        print("reply in first_ti1me",reply)
         user_session['first_time'] = False
         session[user_phone] = user_session
         resp.message(reply)
@@ -116,10 +116,7 @@ def sms_reply():
                     reply = "Invalid option. Please choose a valid option."
                 
 
-                # ... handle other options for product menu
-                session[user_phone] = user_session
-                resp.message(reply)
-                return str(resp)
+               
 
             else:
                 if second_menu == 'removeproduct':
@@ -137,7 +134,7 @@ def sms_reply():
                         else:
                             reply = f"Failed to remove product: {result}"
                     user_session['second_menu'] = None  # Reset the second menu
-                    user_session['first_menu'] = None  # Reset the first menu
+                    
                     session[user_phone] = user_session
                     resp.message(reply)
                     return str(resp)
@@ -164,7 +161,7 @@ def sms_reply():
                             reply = f"Product Details:\nName: {product_details['name']}\nDescription: {product_details['description']}\nPrice: {product_details['price']}"
            
                     user_session['second_menu'] = None  # Reset the second menu
-                    user_session['first_menu'] = None  # Reset the first menu
+                    
                     session[user_phone] = user_session
                     resp.message(reply)
                     return str(resp)
@@ -176,7 +173,7 @@ def sms_reply():
                     reply = add_product(name, price, category, quantity, sku, brand, unitOfMeasure, supplier, description)
                     print(reply)
                     user_session['second_menu'] = None  # Reset the second menu
-                    user_session['first_menu'] = None  # Reset the first menu
+                    
                     session[user_phone] = user_session
                     resp.message(reply)
                     return str(resp)
@@ -205,7 +202,7 @@ def sms_reply():
                             reply = edit_response
            
                     user_session['second_menu'] = None  # Reset the second menu
-                    user_session['first_menu'] = None  # Reset the first menu
+                    
                     session[user_phone] = user_session
                     resp.message(reply)
                     return str(resp)
@@ -277,7 +274,7 @@ def sms_reply():
                         else:
                             reply = f"Failed to remove supplier: {result}"
                     user_session['second_menu'] = None  # Reset the second menu
-                    user_session['first_menu'] = None  # Reset the first menu
+                    
                     session[user_phone] = user_session
                     resp.message(reply)
                     return str(resp)  
@@ -304,7 +301,7 @@ def sms_reply():
                             reply = f"Supplier Details:\nName: {supplier_details['name']}\nAddress: {supplier_details['address']}\nEmail: {supplier_details['email']}"
            
                     user_session['second_menu'] = None  # Reset the second menu
-                    user_session['first_menu'] = None  # Reset the first menu
+                    
                     session[user_phone] = user_session
                     resp.message(reply)
                     return str(resp)
@@ -314,7 +311,7 @@ def sms_reply():
                     reply = add_supplier(name,contactPerson,email,phone,address)
                     print(reply)
                     user_session['second_menu'] = None  # Reset the second menu
-                    user_session['first_menu'] = None  # Reset the first menu
+                    
                     session[user_phone] = user_session
                     resp.message(reply)
                     return str(resp)
@@ -340,7 +337,7 @@ def sms_reply():
                             reply =edit_supplier(supplier_details['_id'],supplier_details)
            
                     user_session['second_menu'] = None  # Reset the second menu
-                    user_session['first_menu'] = None  # Reset the first menu
+                   
                     session[user_phone] = user_session
                     resp.message(reply)
                     return str(resp)
@@ -410,7 +407,7 @@ def sms_reply():
                         else:
                             reply = f"Failed to remove employee: {result}"
                     user_session['second_menu'] = None  # Reset the second menu
-                    user_session['first_menu'] = None  # Reset the first menu
+                    
                     session[user_phone] = user_session
                     resp.message(reply)
                     return str(resp)  
@@ -437,7 +434,7 @@ def sms_reply():
                             reply = f"Supplier Details:\nName: {employee_details['name']}\nAddress: {employee_details['address']}\nEmail: {employee_details['email']}"
            
                     user_session['second_menu'] = None  # Reset the second menu
-                    user_session['first_menu'] = None  # Reset the first menu
+                    
                     session[user_phone] = user_session
                     resp.message(reply)
                     return str(resp)
@@ -447,7 +444,7 @@ def sms_reply():
                     reply = add_employee(name,email,phone,address,position,hireDate,salary,workingHours,status)
                     print(reply)
                     user_session['second_menu'] = None  # Reset the second menu
-                    user_session['first_menu'] = None  # Reset the first menu
+                    
                     session[user_phone] = user_session
                     resp.message(reply)
                     return str(resp)
@@ -473,7 +470,7 @@ def sms_reply():
                             reply =edit_employee(employee_details['_id'],employee_details)
            
                     user_session['second_menu'] = None  # Reset the second menu
-                    user_session['first_menu'] = None  # Reset the first menu
+                   
                     session[user_phone] = user_session
                     resp.message(reply)
                     return str(resp)
