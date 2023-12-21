@@ -28,7 +28,7 @@ def get_employee_id_by_name(employee_name):
         return f"Error: {str(e)}"
 
 def delete_employee(employee_id):
-    api_url = f"https://inventory-website.vercel.app/api/employee/deleteS"
+    api_url = f"https://inventory-website.vercel.app/api/employee/deleteE"
     payload = {"employeeId": employee_id}
 
     try:

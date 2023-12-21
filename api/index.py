@@ -75,7 +75,7 @@ def sms_reply():
                 if msg == '1': 
                     user_session['second_menu'] = 'addproduct'
                     second_menu = 'addproduct'
-                    reply = "Please provide details of the product in the format:\nname,description,price,quantity,unitOfMeasure,category,brand,sku,supplierName"
+                    reply = "Please provide details of the product in the format:\nname,description,price,quantity,unitOfMeasure,category,brand,sku,supplierName(which exists)"
                 elif msg == '2':
                     user_session['second_menu'] = 'removeproduct'
                     second_menu = 'removeproduct'
@@ -405,7 +405,7 @@ def sms_reply():
                         if result == "Employee deleted successfully":
                             reply = f"Employee {employee_name} removed successfully"
                         else:
-                            reply = f"Failed to remove employee: {result}"
+                            reply = f"Operation failed: {result}"
                     user_session['second_menu'] = None  # Reset the second menu
                     
                     session[user_phone] = user_session
