@@ -10,6 +10,7 @@ def get_products(userPhone):
         all_products = list(user_collection.find({}))
         for product in all_products:
             product['_id'] = str(product['_id'])
+        print("all_products are: ", all_products)    
         return jsonify({"allProducts": all_products}), 200    
 
     except Exception as e:
