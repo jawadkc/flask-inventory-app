@@ -17,7 +17,7 @@ def get_products(userPhone):
         return "Internal Server Error", 500
         
     
-def get_product_id_by_name(product_name):
+def get_product_id_by_name(product_name,userPhone):
     if not product_name:
         return "Product name is required"
 
@@ -62,7 +62,7 @@ def add_product(name, price, category, quantity, sku, brand, unitOfMeasure, supp
     except requests.RequestException as e:
         return f"Error: {str(e)}"  # Handle any exception that occurred during the request
 
-def delete_product(product_id):
+def delete_product(product_id,userPhone):
     api_url = f"https://inventory-website.vercel.app/api/product/deleteP"
     payload = {"productId": product_id}
 
@@ -77,7 +77,7 @@ def delete_product(product_id):
     except requests.RequestException as e:
         return f"Error: {str(e)}"
 
-def get_product_details_by_id(product_id):
+def get_product_details_by_id(product_id,userPhone):
     if not product_id:
         return "Product ID is required"
 
@@ -96,7 +96,7 @@ def get_product_details_by_id(product_id):
     except requests.RequestException as e:
         return f"Error: {str(e)}"    
 
-def edit_product(id,updatedProduct):
+def edit_product(id,updatedProduct,userPhone):
     api_url = "https://inventory-website.vercel.app/api/product/updateP"
     
     form_data = {

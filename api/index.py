@@ -96,7 +96,7 @@ def sms_reply():
                 elif msg == '4':
                     reply = "List of Products:\n"
                     # Get product data
-                    products = get_products()
+                    products = get_products(user_phone)
                     if products:
                         # Format product data as a string
                         product_list = "\n\n".join([f"Name: {product['name']}\nDescription: {product['description']}\nPrice: {product['price']}" for product in products])
