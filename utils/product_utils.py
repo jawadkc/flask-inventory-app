@@ -11,7 +11,7 @@ def get_products(userPhone):
         for product in allProducts:
             product['_id'] = str(product['_id'])
         print("allProducts are: ", allProducts)    
-        return jsonify({"allProducts": allProducts}), 200    
+        return jsonify({allProducts})
 
     except Exception as e:
         print("Error fetching Employees:", str(e))
