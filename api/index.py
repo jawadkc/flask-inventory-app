@@ -8,6 +8,7 @@ from utils.employee_utils import get_employees, get_employee_id_by_name, delete_
 
 
 
+
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'mysecretkeyjuni'
 
@@ -24,6 +25,7 @@ def sms_reply():
     if msg.lower()=="reset":
         session.clear()
     user_phone = request.form.get('From')
+    
     user_session = session.get(user_phone, {'first_time': True})
     resp = MessagingResponse()
 
@@ -122,13 +124,13 @@ def sms_reply():
                 if second_menu == 'removeproduct':
                     
                     product_name = msg  # Assuming the message contains the name of the product to remove
-                    product_id = get_product_id_by_name(product_name)
+                    product_id = get_product_id_by_name(product_name,user_phone)
                     if product_id=="Product not found":
                         # Handle cases where product is not found or error occurred
                         reply = "Product does not exist"
                     else:
                         # Call the API or method to remove the product using product_id
-                        result = delete_product(str(product_id))
+                        result = delete_product(str(product_id),user_phone)
                         if result == "Product deleted successfully":
                             reply = f"Product {product_name} removed successfully"
                         else:
@@ -140,13 +142,13 @@ def sms_reply():
                     return str(resp)
                 elif second_menu == 'viewproduct':
                     product_name = msg  # Assuming the message contains the name of the product to remove
-                    product_id = get_product_id_by_name(product_name)
+                    product_id = get_product_id_by_name(product_name,user_phone)
                     if product_id=="Product not found":
                         # Handle cases where product is not found or error occurred
                         reply = "Product does not exist"
                     else:
                         # Call the API or method to remove the product using product_id
-                        result = get_product_details_by_id(str(product_id))
+                        result = get_product_details_by_id(str(product_id),user_phone)
                         if result == "Product not found":
                             reply = "Product not found"
                         elif result=="Product details not found":
@@ -168,7 +170,7 @@ def sms_reply():
                 elif second_menu == 'addproduct':
                     product_details = msg
                     name, description, price, quantity, unitOfMeasure, category, brand, sku, supplierName = product_details.split(",")
-                    supplier=str(get_supplier_id_by_name(supplierName ))
+                    supplier=str(get_supplier_id_by_name(supplierName,user_phone))
                     print(name, description, price, quantity, unitOfMeasure, category, brand, sku, supplierName)
                     reply = add_product(name, price, category, quantity, sku, brand, unitOfMeasure, supplier, description)
                     print(reply)
@@ -179,7 +181,7 @@ def sms_reply():
                     return str(resp)
                 elif second_menu=="editproduct":
                     product_Name,item_name,new_value=msg.split(",")
-                    product_Id = get_product_id_by_name(product_Name)
+                    product_Id = get_product_id_by_name(product_Name,user_phone)
                     if product_Id=="Product not found":
                         # Handle cases where product is not found or error occurred
                         reply = "Product does not exist"

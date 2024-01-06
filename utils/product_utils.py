@@ -1,13 +1,21 @@
+from flask import jsonify
 import requests
+from utils.dbConfig import connect
+def get_products(userPhone):
+    try:
+        connect()
+        client = connect()
+        db = client.get_database(userPhone)
+        user_collection = db.products
+        all_products = list(user_collection.find({}))
+        for product in all_products:
+            product['_id'] = str(product['_id'])
+        return jsonify({"allProducts": all_products}), 200    
 
-def get_products():
-    # Make a GET request to the API endpoint that provides product data
-    response = requests.get('https://inventory-website.vercel.app/api/product/getPs')
-
-    if response.status_code == 200:
-        return response.json().get('allProducts')  # Extracting product data from the response
-    else:
-        return None
+    except Exception as e:
+        print("Error fetching Employees:", str(e))
+        return "Internal Server Error", 500
+        
     
 def get_product_id_by_name(product_name):
     if not product_name:
