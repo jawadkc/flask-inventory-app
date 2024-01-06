@@ -7,11 +7,11 @@ def get_products(userPhone):
         client = connect()
         db = client.get_database(userPhone)
         user_collection = db.products
-        all_products = list(user_collection.find({}))
-        for product in all_products:
+        allProducts = list(user_collection.find({}))
+        for product in allProducts:
             product['_id'] = str(product['_id'])
-        print("all_products are: ", all_products)    
-        return jsonify({"allProducts": all_products}), 200    
+        print("allProducts are: ", allProducts)    
+        return jsonify({"allProducts": allProducts}), 200    
 
     except Exception as e:
         print("Error fetching Employees:", str(e))
