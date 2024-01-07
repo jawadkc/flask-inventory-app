@@ -1,5 +1,6 @@
 from flask import jsonify
 import requests
+from bson import ObjectId
 from utils.dbConfig import connect
 
 def convert_phone_number(phone_number):
@@ -106,23 +107,24 @@ def add_employee(name, email, phone, address ,position, hireDate,salary,workingH
     except requests.RequestException as e:
         return f"Error: {str(e)}" 
     
-
-def edit_employee(id,updatedEmployee):
-    api_url = "https://inventory-website.vercel.app/api/employee/updateE"
-    
-    form_data = {
-        "employeeId": id,
-        "updatedEmployee": updatedEmployee
-    }
-
+def edit_employee(id, updatedEmployee, userPhone):
     try:
-        response = requests.put(api_url, json=form_data)
-        if response.status_code == 200:
-            return "Employee edited successfully"  # Or any success message
-        else:
-            print("Failed to edit employee")
-            print("Response is: ",response)
-            return "Failed to edit employee"  # Or any error message based on response
+        connect()
+        client = connect()
+        transformedPhone = convert_phone_number(userPhone)
+        db = client.get_database(transformedPhone)
+        user_collection = db.employees
+        
+        employee_id = ObjectId(id)
+        result = user_collection.update_one({"_id": employee_id}, {"$set": updatedEmployee})
 
-    except requests.RequestException as e:
-        return f"Error: {str(e)}"  # Handle any exception that occurred during the request
+        client.close()
+
+        if result.modified_count > 0:
+            return "Employee edited successfully"
+        else:
+            return "Employee not found or no changes made"
+
+    except Exception as e:
+        print("Error editing employee:", str(e))
+        return "Error occurred while editing the employee"
