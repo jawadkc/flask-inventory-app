@@ -122,22 +122,25 @@ def add_supplier(name, contactPerson, email, phone, address):
     except requests.RequestException as e:
         return f"Error: {str(e)}" 
 
-def edit_supplier(id,updatedSupplier):
-    api_url = "https://inventory-website.vercel.app/api/supplier/updateS"
-    
-    form_data = {
-        "supplierId": id,
-        "updatedSupplier": updatedSupplier
-    }
+def edit_supplier(id,updatedSupplier, userPhone):
 
     try:
-        response = requests.put(api_url, json=form_data)
-        if response.status_code == 200:
-            return "Supplier edited successfully"  # Or any success message
-        else:
-            print("Failed to edit supplier")
-            print("Response is: ",response)
-            return "Failed to edit supplier"  # Or any error message based on response
+        connect()
+        client = connect()
+        transformedPhone = convert_phone_number(userPhone)
+        db = client.get_database(transformedPhone)
+        user_collection = db.suppliers
 
-    except requests.RequestException as e:
-        return f"Error: {str(e)}"  # Handle any exception that occurred during the request
+        supplier_id = ObjectId(id)
+        result = user_collection.update_one({"_id": supplier_id}, {"$set": updatedSupplier})
+
+        client.close()
+
+        if result.modified_count > 0:
+            return "Product edited successfully"
+        else:
+            return "Product not found or no changes made"
+
+    except Exception as e:
+        print("Error editing product:", str(e))
+        return "Error occurred while editing the product"
