@@ -1,13 +1,25 @@
 import requests
 
-def get_employees():
-    # Make a GET request to the API endpoint that provides employee data
-    response = requests.get('https://inventory-website.vercel.app/api/employee/getEs')
+def convert_phone_number(phone_number):
+    return "0" + phone_number[12:]
 
-    if response.status_code == 200:
-        return response.json().get('allEmployees')  # Extracting product data from the response
-    else:
-        return None      
+def get_employees(userPhone):
+    try:
+        connect()
+        client = connect()
+        transformedPhone = convert_phone_number(userPhone)
+        db = client.get_database(transformedPhone)
+        user_collection = db.employees
+        allEmployees = list(user_collection.find({}))
+        for employee in allEmployees:
+            employee['_id'] = str(employee['_id'])
+        print("allEmployee are: ", allEmployees)    
+        #return jsonify({allProducts})
+        return allEmployees
+
+    except Exception as e:
+        print("Error fetching Employees:", str(e))
+        return "Internal Server Error", 500       
 
 def get_employee_id_by_name(employee_name):
     if not employee_name:

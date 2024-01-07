@@ -1,13 +1,25 @@
 import requests
+from utils.dbConfig import connect
+def convert_phone_number(phone_number):
+    return "0" + phone_number[12:]
 
-def get_suppliers():
-    # Make a GET request to the API endpoint that provides supplier data
-    response = requests.get('https://inventory-website.vercel.app/api/supplier/getSs')
+def get_suppliers(userPhone):
+    try:
+        connect()
+        client = connect()
+        transformedPhone = convert_phone_number(userPhone)
+        db = client.get_database(transformedPhone)
+        user_collection = db.suppliers
+        allSuppliers = list(user_collection.find({}))
+        for supplier in allSuppliers:
+            supplier['_id'] = str(supplier['_id'])
+        print("allSuppliers are: ", allSuppliers)    
+        #return jsonify({allProducts})
+        return allSuppliers
 
-    if response.status_code == 200:
-        return response.json().get('allSuppliers')  # Extracting product data from the response
-    else:
-        return None  
+    except Exception as e:
+        print("Error fetching Suppliers:", str(e))
+        return "Internal Server Error", 500  
 
 def get_supplier_id_by_name(supplier_name):
     if not supplier_name:

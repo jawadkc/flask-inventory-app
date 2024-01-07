@@ -4,7 +4,8 @@ from utils.dbConfig import connect
 def convert_phone_number(phone_number):
     return "0" + phone_number[12:]
     
-#whatsapp:+923
+#whatsapp:+923474980626
+
 def get_products(userPhone):
     try:
         connect()
@@ -21,7 +22,7 @@ def get_products(userPhone):
         return allProducts
 
     except Exception as e:
-        print("Error fetching Employees:", str(e))
+        print("Error fetching Products:", str(e))
         return "Internal Server Error", 500
         
     
