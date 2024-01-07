@@ -2,16 +2,13 @@ from flask import jsonify
 import requests
 from utils.dbConfig import connect
 def convert_phone_number(phone_number):
-    if phone_number.startswith("+92") and len(phone_number) == 13:
-        return "0" + phone_number[3:]
-    else:
-        return phone_number
+    return "0" + phone_number[3:]
+    
 
 def get_products(userPhone):
     try:
         connect()
         client = connect()
-        print("client is",client)
         transformedPhone = convert_phone_number(userPhone)
         print("transformed phone:",transformedPhone)
         db = client.get_database(transformedPhone)
