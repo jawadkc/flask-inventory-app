@@ -30,8 +30,14 @@ def sms_reply():
     resp = MessagingResponse()
 
     if user_session['first_time']:
-        reply = "Welcome to the Inventory Management Website\n1. Information regarding Products\n2. Information regarding Suppliers\n3. Information regarding Employees\n4. Type reset to reset\n5. General information about the whole system"
-        print("reply in first_ti1me",reply)
+        reply = "Welcome to the Inventory Management Website\n"
+        "1. Information regarding Products\n"
+        "2. Information regarding Suppliers\n"
+        "3. Information regarding Employees\n"
+        "4. Type reset to reset\n" 
+        "5. General information about the whole system"
+
+        print("reply in first_time",reply)
         user_session['first_time'] = False
         session[user_phone] = user_session
         resp.message(reply)
@@ -75,9 +81,11 @@ def sms_reply():
             if not second_menu:
                 # Handle product menu options
                 if msg == '1': 
+                    # Add Product Functionality 
                     user_session['second_menu'] = 'addproduct'
                     second_menu = 'addproduct'
                     reply = "Please provide details of the product in the format:\nname,description,price,quantity,unitOfMeasure,category,brand,sku,supplierName(which exists)"
+
                 elif msg == '2':
                     user_session['second_menu'] = 'removeproduct'
                     second_menu = 'removeproduct'
@@ -170,15 +178,13 @@ def sms_reply():
                 elif second_menu == 'addproduct':
                     product_details = msg
                     name, description, price, quantity, unitOfMeasure, category, brand, sku, supplierName = product_details.split(",")
-                    supplier=str(get_supplier_id_by_name(supplierName,user_phone))
-                    print(name, description, price, quantity, unitOfMeasure, category, brand, sku, supplierName)
-                    reply = add_product(name, price, category, quantity, sku, brand, unitOfMeasure, supplier, description)
-                    print(reply)
+                    supplier = get_supplier_id_by_name(supplierName, user_phone)
+                    reply = add_product(name, description, price, quantity, unitOfMeasure, category, brand, sku, supplier)
                     user_session['second_menu'] = None  # Reset the second menu
-                    
                     session[user_phone] = user_session
                     resp.message(reply)
                     return str(resp)
+
                 elif second_menu=="editproduct":
                     product_Name,item_name,new_value=msg.split(",")
                     product_Id = get_product_id_by_name(product_Name,user_phone)
