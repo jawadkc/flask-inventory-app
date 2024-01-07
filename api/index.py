@@ -2,7 +2,7 @@ from flask import Flask, request,session
 from twilio.twiml.messaging_response import MessagingResponse
 
 
-from utils.product_utils import get_products, get_product_id_by_name, add_product, delete_product, get_product_details_by_id, edit_product
+from utils.product_utils import get_products, get_product_details_by_name, add_product, delete_product, edit_product
 from utils.supplier_utils import get_suppliers, get_supplier_id_by_name, delete_supplier, get_supplier_details_by_id, add_supplier, edit_supplier
 from utils.employee_utils import get_employees, get_employee_id_by_name, delete_employee , get_employee_details_by_id, add_employee, edit_employee
 
