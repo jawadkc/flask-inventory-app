@@ -1,4 +1,6 @@
 from flask import jsonify
+from bson import ObjectId
+
 import requests
 from utils.dbConfig import connect
 def convert_phone_number(phone_number):
@@ -95,22 +97,24 @@ def delete_product(product_id, userPhone):
         return "Error occurred while deleting the product"
 
 
-def edit_product(id,updatedProduct,userPhone):
-    api_url = "https://inventory-website.vercel.app/api/product/updateP"
-    
-    form_data = {
-        "productId": id,
-        "updatedProduct": updatedProduct
-    }
-
+def edit_product(id, updatedProduct, userPhone):
     try:
-        response = requests.put(api_url, json=form_data)
-        if response.status_code == 200:
-            return "Product edited successfully"  # Or any success message
-        else:
-            print("Failed to edit product")
-            print("Response is: ",response)
-            return "Failed to edit product"  # Or any error message based on response
+        connect()
+        client = connect()
+        transformedPhone = convert_phone_number(userPhone)
+        db = client.get_database(transformedPhone)
+        user_collection = db.products
+        
+        product_id = ObjectId(id)
+        result = user_collection.update_one({"_id": product_id}, {"$set": updatedProduct})
 
-    except requests.RequestException as e:
-        return f"Error: {str(e)}"  # Handle any exception that occurred during the request
+        client.close()
+
+        if result.modified_count > 0:
+            return "Product edited successfully"
+        else:
+            return "Product not found or no changes made"
+
+    except Exception as e:
+        print("Error editing product:", str(e))
+        return "Error occurred while editing the product"

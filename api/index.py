@@ -124,14 +124,12 @@ def sms_reply():
                     #delete all the first_menu, secon_menu and first_Time if necessary
                 else:
                     reply = "Invalid option. Please choose a valid option."
-                
 
-               
 
             else:
                 if second_menu == 'removeproduct':
                     product_name = msg
-                    product_id = get_product_details_by_name(product_name, userPhone)
+                    product_id = get_product_details_by_name(product_name, user_phone)
                     if product_id == "Product not found":
                         reply = "Product does not exist"
                     else:
@@ -144,6 +142,7 @@ def sms_reply():
                     session[user_phone] = user_session
                     resp.message(reply)
                     return str(resp)
+                
                 elif second_menu == 'viewproduct':
                     product_name = msg  # Assuming the message contains the name of the product to remove
                     result = get_product_details_by_name(product_name,user_phone)
