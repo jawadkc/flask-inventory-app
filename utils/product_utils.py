@@ -2,9 +2,9 @@ from flask import jsonify
 import requests
 from utils.dbConfig import connect
 def convert_phone_number(phone_number):
-    return "0" + phone_number[3:]
+    return "0" + phone_number[12:]
     
-
+#whatsapp:+923
 def get_products(userPhone):
     try:
         connect()
