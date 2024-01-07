@@ -4,7 +4,7 @@ from utils.dbConfig import connect
 def convert_phone_number(phone_number):
     return "0" + phone_number[12:]
     
-#whatsapp:+923474980626
+
 
 def get_products(userPhone):
     try:
@@ -27,7 +27,7 @@ def get_products(userPhone):
         return "Internal Server Error", 500
         
     
-def get_product_id_by_name(product_name,userPhone):
+def get_product_details_by_name(product_name,userPhone):
     try:
         connect()
         client = connect()
@@ -90,28 +90,6 @@ def delete_product(product_id,userPhone):
     except requests.RequestException as e:
         return f"Error: {str(e)}"
 
-def get_product_details_by_id(product_id,userPhone):
-    try:
-        connect()
-        client = connect()
-        transformedPhone = convert_phone_number(userPhone)
-        print("transformed phone:",transformedPhone)
-        db = client.get_database(transformedPhone)
-        user_collection = db.products
-        productDetails = user_collection.find_one({"_id": product_id})
-        print("product_details are:",productDetails)
-        client.close()
-        if productDetails:
-            productDetails['_id'] = str(productDetails['_id'])
-            print("product details are: ", productDetails)
-            return productDetails
-        else:
-            print("Product not found")
-            return "Product not found"#, 404
-
-    except Exception as e:
-        print("Error fetching product details:", str(e))
-        return "Internal Server Error", 500
 
 def edit_product(id,updatedProduct,userPhone):
     api_url = "https://inventory-website.vercel.app/api/product/updateP"
