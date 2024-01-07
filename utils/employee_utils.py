@@ -1,5 +1,6 @@
 import requests
 
+from utils.dbConfig import connect
 def convert_phone_number(phone_number):
     return "0" + phone_number[12:]
 
@@ -14,31 +15,34 @@ def get_employees(userPhone):
         for employee in allEmployees:
             employee['_id'] = str(employee['_id'])
         print("allEmployee are: ", allEmployees)    
-        #return jsonify({allProducts})
+        #return jsonify({allEmployees})
         return allEmployees
 
     except Exception as e:
         print("Error fetching Employees:", str(e))
         return "Internal Server Error", 500       
 
-def get_employee_id_by_name(employee_name):
-    if not employee_name:
-        return "Employee name is required"
-
-    api_url = f"https://inventory-website.vercel.app/api/employee/getId?name={employee_name}"
-
+def get_employee_details_by_name(employee_name,userPhone):
     try:
-        response = requests.get(api_url)
-        if response.status_code == 200:
-            employee_id = response.json().get('_id')
-            return employee_id if employee_id else "Employee not found"
-        elif response.status_code == 404:
-            return "Employee not found"
+        connect()
+        client = connect()
+        transformedPhone = convert_phone_number(userPhone)
+        print("transformed phone:",transformedPhone)
+        db = client.get_database(transformedPhone)
+        user_collection = db.employees
+        employeeDetails = user_collection.find_one({"name": employee_name})
+        employeeDetails["_id"]=str(employeeDetails["_id"])
+        client.close()
+        if employeeDetails:
+            print("employee details are: ", employeeDetails)
+            return employeeDetails
         else:
-            return "Failed to fetch employee details"
-    except requests.RequestException as e:
-        return f"Error: {str(e)}"
+            print("Employee not found")
+            return "Employee not found"#, 404
 
+    except Exception as e:
+        print("Error fetching employee details:", str(e))
+        return "Internal Server Error", 500
 def delete_employee(employee_id):
     api_url = f"https://inventory-website.vercel.app/api/employee/deleteE"
     payload = {"employeeId": employee_id}

@@ -21,24 +21,27 @@ def get_suppliers(userPhone):
         print("Error fetching Suppliers:", str(e))
         return "Internal Server Error", 500  
 
-def get_supplier_id_by_name(supplier_name):
-    if not supplier_name:
-        return "Supplier name is required"
-
-    api_url = f"https://inventory-website.vercel.app/api/supplier/getId?name={supplier_name}"
-
+def get_supplier_details_by_name(supplier_name,userPhone):
     try:
-        response = requests.get(api_url)
-        if response.status_code == 200:
-            supplier_id = response.json().get('_id')
-            return supplier_id if supplier_id else "Supplier not found"
-        elif response.status_code == 404:
-            return "Supplier not found"
+        connect()
+        client = connect()
+        transformedPhone = convert_phone_number(userPhone)
+        print("transformed phone:",transformedPhone)
+        db = client.get_database(transformedPhone)
+        user_collection = db.suppliers
+        supplierDetails = user_collection.find_one({"name": supplier_name})
+        supplierDetails["_id"]=str(supplierDetails["_id"])
+        client.close()
+        if supplierDetails:
+            print("supplier details are: ", supplierDetails)
+            return supplierDetails
         else:
-            return "Failed to fetch supplier details"
-    except requests.RequestException as e:
-        return f"Error: {str(e)}"
+            print("Supplier not found")
+            return "Supplier not found"#, 404
 
+    except Exception as e:
+        print("Error fetching supplier details:", str(e))
+        return "Internal Server Error", 500
 def delete_supplier(supplier_id):
     api_url = f"https://inventory-website.vercel.app/api/supplier/deleteS"
     payload = {"supplierId": supplier_id}
@@ -54,23 +57,6 @@ def delete_supplier(supplier_id):
     except requests.RequestException as e:
         return f"Error: {str(e)}"
 
-def get_supplier_details_by_id(supplier_id):
-    if not supplier_id:
-        return "Supplier ID is required"
-
-    api_url = f"https://inventory-website.vercel.app/api/supplier/getS?id={supplier_id}"
-
-    try:
-        response = requests.get(api_url)
-        if response.status_code == 200:
-            supplier_details = response.json().get('supplier')
-            return supplier_details if supplier_details else "Supplier details not found"
-        elif response.status_code == 404:
-            return "Supplier not found"
-        else:
-            return "Failed to fetch supplier details"
-    except requests.RequestException as e:
-        return f"Error: {str(e)}"    
 
 def add_supplier(name, contactPerson, email, phone, address):
     api_url = "https://inventory-website.vercel.app/api/supplier/addS"
