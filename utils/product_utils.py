@@ -5,8 +5,12 @@ def get_products(userPhone):
     try:
         connect()
         client = connect()
+        print("client is",client)
         db = client.get_database(userPhone)
+        print("number is: ",userPhone)
+        print("db is:",db)
         user_collection = db.products
+        print("user collection is: ",user_collection)
         allProducts = list(user_collection.find({}))
         for product in allProducts:
             product['_id'] = str(product['_id'])
