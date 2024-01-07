@@ -23,37 +23,26 @@ def get_suppliers(userPhone):
         print("Error fetching Suppliers:", str(e))
         return "Internal Server Error", 500  
 
-def get_supplier_id_by_name(supplier_name, userPhone):
-    if not supplier_name:
-        return "Supplier name is required"
-
-    api_url = f"https://inventory-website.vercel.app/api/supplier/getId?name={supplier_name}&userPhone={userPhone}"
-
+def get_supplier_id_by_name(supplier_name, userPhone): 
     try:
         connect()
         client = connect()
         transformedPhone = convert_phone_number(userPhone)
         db = client.get_database(transformedPhone)
         user_collection = db.suppliers  # Assuming a 'suppliers' collection
+        
+        supplierDetails = user_collection.find_one({"name": supplier_name})
+        client.close()
 
-        response = requests.get(api_url)
-        if response.status_code == 200:
-            supplier_id = response.json().get('_id')
-            client.close()
-            return supplier_id if supplier_id else "Supplier not found"
-        elif response.status_code == 404:
-            client.close()
-            return "Supplier not found"
+        if supplierDetails:
+            print("Supplier Details are: ", supplierDetails)
+            return supplierDetails['_id']
         else:
-            client.close()
-            return "Failed to fetch supplier details"
-    except requests.RequestException as e:
-        client.close()
-        return f"Error: {str(e)}"
+            print("Supplier not Found")
+            return "Supplier not found"
     except Exception as e:
-        client.close()
+        print("Error fetching Supplier details:", str(e))
         return "Internal Server Error", 500
-
 
 def delete_supplier(supplier_id, userPhone):
     try:

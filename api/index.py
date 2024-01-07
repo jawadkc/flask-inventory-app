@@ -194,6 +194,7 @@ def sms_reply():
                             product_details[item_name] = new_value
                             edit_response = edit_product(product_Id, product_details, user_phone)
                             reply = edit_response
+
                     user_session['second_menu'] = None  # Reset the second menu
                     session[user_phone] = user_session
                     resp.message(reply)
@@ -249,7 +250,7 @@ def sms_reply():
             else:
                 if second_menu == 'removesupplier':
                     supplier_name = msg  # Assuming the message contains the name of the supplier to remove
-                    supplier_id = get_supplier_id_by_name(supplier_name)
+                    supplier_id = get_supplier_id_by_name(supplier_name, user_phone)
                     if supplier_id=="Supplier not found":
                         # Handle cases where supplier is not found or error occurred
                         reply = "Supplier does not exist"

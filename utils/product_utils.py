@@ -39,6 +39,7 @@ def get_product_details_by_name(product_name,userPhone):
         user_collection = db.products
         productDetails = user_collection.find_one({"name": product_name})
         client.close()
+        
         if productDetails:
             print("product details are: ", productDetails)
             return productDetails['_id']
