@@ -75,20 +75,24 @@ def add_product(name, price, category, quantity, sku, brand, unitOfMeasure, supp
     except requests.RequestException as e:
         return f"Error: {str(e)}"  # Handle any exception that occurred during the request
 
-def delete_product(product_id,userPhone):
-    api_url = f"https://inventory-website.vercel.app/api/product/deleteP"
-    payload = {"productId": product_id}
-
+def delete_product(product_id, userPhone):
     try:
-        response = requests.delete(api_url, json=payload)
-        if response.status_code == 200:
+        connect()
+        client = connect()
+        transformedPhone = convert_phone_number(userPhone)
+        db = client.get_database(transformedPhone)
+        user_collection = db.products
+        result = user_collection.delete_one({"_id": ObjectId(product_id)})
+        client.close()
+
+        if result.deleted_count > 0:
             return "Product deleted successfully"
-        elif response.status_code == 404:
-            return "Product not found"
         else:
-            return "Failed to delete product"
-    except requests.RequestException as e:
-        return f"Error: {str(e)}"
+            return "Product not found"
+
+    except Exception as e:
+        print("Error deleting product:", str(e))
+        return "Error occurred while deleting the product"
 
 
 def edit_product(id,updatedProduct,userPhone):
