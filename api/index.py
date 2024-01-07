@@ -8,7 +8,6 @@ from utils.employee_utils import get_employees, get_employee_id_by_name, delete_
 
 
 
-
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'mysecretkeyjuni'
 
