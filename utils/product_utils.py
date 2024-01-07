@@ -27,22 +27,25 @@ def get_products(userPhone):
         
     
 def get_product_id_by_name(product_name,userPhone):
-    if not product_name:
-        return "Product name is required"
-
-    api_url = f"https://inventory-website.vercel.app/api/product/getId?name={product_name}"
-
     try:
-        response = requests.get(api_url)
-        if response.status_code == 200:
-            product_id = response.json().get('_id')
-            return product_id if product_id else "Product not found"
-        elif response.status_code == 404:
-            return "Product not found"
+        connect()
+        client = connect()
+        transformedPhone = convert_phone_number(userPhone)
+        print("transformed phone:",transformedPhone)
+        db = client.get_database(transformedPhone)
+        user_collection = db.products
+        productDetails = user_collection.find_one({"name": product_name})
+        
+        if productDetails:
+            print("product details are: ", productDetails)
+            return productDetails['_id']
         else:
-            return "Failed to fetch product details"
-    except requests.RequestException as e:
-        return f"Error: {str(e)}"    
+            print("Product not found")
+            return "Product not found"#, 404
+
+    except Exception as e:
+        print("Error fetching product details:", str(e))
+        return "Internal Server Error", 500
 
 def add_product(name, price, category, quantity, sku, brand, unitOfMeasure, supplier, description):
     api_url = "https://inventory-website.vercel.app/api/product/addP"
@@ -87,23 +90,26 @@ def delete_product(product_id,userPhone):
         return f"Error: {str(e)}"
 
 def get_product_details_by_id(product_id,userPhone):
-    if not product_id:
-        return "Product ID is required"
-
-    api_url = f"https://inventory-website.vercel.app/api/product/getP?id={product_id}"
-
     try:
-        response = requests.get(api_url)
-        if response.status_code == 200:
-            product_details = response.json().get('product')
-            print("product details are: ",product_details)
-            return product_details if product_details else "Product details not found"
-        elif response.status_code == 404:
-            return "Product not found"
+        connect()
+        client = connect()
+        transformedPhone = convert_phone_number(userPhone)
+        print("transformed phone:",transformedPhone)
+        db = client.get_database(transformedPhone)
+        user_collection = db.products
+        productDetails = user_collection.find_one({"_id": product_id})
+        
+        if productDetails:
+            productDetails['_id'] = str(productDetails['_id'])
+            print("product details are: ", productDetails)
+            return productDetails
         else:
-            return "Failed to fetch product details"
-    except requests.RequestException as e:
-        return f"Error: {str(e)}"    
+            print("Product not found")
+            return "Product not found"#, 404
+
+    except Exception as e:
+        print("Error fetching product details:", str(e))
+        return "Internal Server Error", 500
 
 def edit_product(id,updatedProduct,userPhone):
     api_url = "https://inventory-website.vercel.app/api/product/updateP"
