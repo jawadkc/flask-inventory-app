@@ -70,24 +70,6 @@ def delete_supplier(supplier_id, userPhone):
         return "Error occurred while deleting the supplier"
 
 
-def get_supplier_details_by_id(supplier_id):
-    if not supplier_id:
-        return "Supplier ID is required"
-
-    api_url = f"https://inventory-website.vercel.app/api/supplier/getS?id={supplier_id}"
-
-    try:
-        response = requests.get(api_url)
-        if response.status_code == 200:
-            supplier_details = response.json().get('supplier')
-            return supplier_details if supplier_details else "Supplier details not found"
-        elif response.status_code == 404:
-            return "Supplier not found"
-        else:
-            return "Failed to fetch supplier details"
-    except requests.RequestException as e:
-        return f"Error: {str(e)}"    
-
 def add_supplier(name, contactPerson, email, phone, address):
     api_url = "https://inventory-website.vercel.app/api/supplier/addS"
     
