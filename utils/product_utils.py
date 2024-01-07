@@ -19,6 +19,7 @@ def get_products(userPhone):
             product['_id'] = str(product['_id'])
         print("allProducts are: ", allProducts)    
         #return jsonify({allProducts})
+        client.close()
         return allProducts
 
     except Exception as e:
@@ -35,7 +36,7 @@ def get_product_id_by_name(product_name,userPhone):
         db = client.get_database(transformedPhone)
         user_collection = db.products
         productDetails = user_collection.find_one({"name": product_name})
-        
+        client.close()
         if productDetails:
             print("product details are: ", productDetails)
             return productDetails['_id']
@@ -98,7 +99,8 @@ def get_product_details_by_id(product_id,userPhone):
         db = client.get_database(transformedPhone)
         user_collection = db.products
         productDetails = user_collection.find_one({"_id": product_id})
-        
+        print("product_details are:",productDetails)
+        client.close()
         if productDetails:
             productDetails['_id'] = str(productDetails['_id'])
             print("product details are: ", productDetails)
