@@ -130,21 +130,17 @@ def sms_reply():
 
             else:
                 if second_menu == 'removeproduct':
-                    
-                    product_name = msg  # Assuming the message contains the name of the product to remove
-                    product_id = get_product_id_by_name(product_name,user_phone)
-                    if product_id=="Product not found":
-                        # Handle cases where product is not found or error occurred
+                    product_name = msg
+                    product_id = get_product_details_by_name(product_name, userPhone)
+                    if product_id == "Product not found":
                         reply = "Product does not exist"
                     else:
-                        # Call the API or method to remove the product using product_id
-                        result = delete_product(str(product_id),user_phone)
+                        result = delete_product(product_id, user_phone)
                         if result == "Product deleted successfully":
                             reply = f"Product {product_name} removed successfully"
                         else:
                             reply = f"Failed to remove product: {result}"
                     user_session['second_menu'] = None  # Reset the second menu
-                    
                     session[user_phone] = user_session
                     resp.message(reply)
                     return str(resp)
@@ -178,7 +174,7 @@ def sms_reply():
                 elif second_menu == 'addproduct':
                     product_details = msg
                     name, description, price, quantity, unitOfMeasure, category, brand, sku, supplierName = product_details.split(",")
-                    supplier = get_supplier_id_by_name(supplierName, user_phone)
+                    supplier = get_product_details_by_name(supplierName, user_phone)
                     reply = add_product(name, description, price, quantity, unitOfMeasure, category, brand, sku, supplier)
                     user_session['second_menu'] = None  # Reset the second menu
                     session[user_phone] = user_session
@@ -187,11 +183,11 @@ def sms_reply():
 
                 elif second_menu == "editproduct":
                     product_Name, item_name, new_value = msg.split(",")
-                    product_Id = get_product_id_by_name(product_Name, user_phone)
+                    product_Id = get_product_details_by_name(product_Name, user_phone)
                     if product_Id == "Product not found":
                         reply = "Product does not exist"
                     else:
-                        result = get_product_details_by_id(product_Id)
+                        result = get_product_details_by_name(product_Id)
                         if result == "Product not found" or result == "Product details not found" or result == "Product ID is required":
                             reply = "Failed to fetch product details"
                         else:
@@ -467,13 +463,6 @@ def sms_reply():
                     resp.message(reply)
                     return str(resp)
                     
-                
-        
-        
-
-       
-    
-    
     #if the above conditions are not working
     print("Before sending the response: ",reply)
     session[user_phone] = user_session
