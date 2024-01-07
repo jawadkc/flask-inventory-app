@@ -192,7 +192,7 @@ def sms_reply():
                         else:
                             product_details = result
                             product_details[item_name] = new_value
-                            edit_response = edit_product(product_Id, product_details)
+                            edit_response = edit_product(product_Id, product_details, user_phone)
                             reply = edit_response
                     user_session['second_menu'] = None  # Reset the second menu
                     session[user_phone] = user_session
