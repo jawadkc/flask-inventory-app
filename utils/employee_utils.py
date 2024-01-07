@@ -42,7 +42,7 @@ def get_employee_id_by_name(employee_name,userPhone):
             return "Employee not found"#, 404
 
     except Exception as e:
-        print("Error fetching product details:", str(e))
+        print("Error fetching Employee details:", str(e))
         return "Internal Server Error", 500
 
 
