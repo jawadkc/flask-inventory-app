@@ -235,7 +235,7 @@ def sms_reply():
                     reply = "List of Suppliers:\n"
                     
                     # Get supplier data
-                    suppliers = get_suppliers()
+                    suppliers = get_suppliers(user_phone)
                     if suppliers:
                         # Format supplier data as a string
                         supplier_list = "\n\n".join([f"Name: {supplier['name']}\nPhone: {supplier['phone']}\nAddress: {supplier['address']}" for supplier in suppliers])
@@ -369,7 +369,7 @@ def sms_reply():
                 elif msg == '4':
                     reply = "List of Employees:\n"
                     # Get employees data
-                    employees = get_employees()
+                    employees = get_employees(user_phone)
                     if employees:
                         # Format product data as a string
                         employee_list = "\n\n".join([f"Name: {employee['name']}\nEmail: {employee['email']}\nPhone: {employee['phone']}" for employee in employees])
