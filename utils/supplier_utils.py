@@ -53,20 +53,31 @@ def get_supplier_id_by_name(supplier_name, userPhone):
         return "Internal Server Error", 500
 
 
-def delete_supplier(supplier_id):
-    api_url = f"https://inventory-website.vercel.app/api/supplier/deleteS"
-    payload = {"supplierId": supplier_id}
-
+def delete_supplier(supplier_id, userPhone):
     try:
-        response = requests.delete(api_url, json=payload)
-        if response.status_code == 200:
+        connect()
+        client = connect()
+        transformedPhone = convert_phone_number(userPhone)
+        db = client.get_database(transformedPhone)
+        user_collection = db.suppliers  # Assuming a 'suppliers' collection
+
+        # Convert the ID string to ObjectId
+        supplier_object_id = ObjectId(supplier_id)
+
+        # Delete the supplier based on the supplied ID
+        result = user_collection.delete_one({"_id": supplier_object_id})
+
+        client.close()
+
+        if result.deleted_count > 0:
             return "Supplier deleted successfully"
-        elif response.status_code == 404:
-            return "Supplier not found"
         else:
-            return "Failed to delete supplier"
-    except requests.RequestException as e:
-        return f"Error: {str(e)}"
+            return "Supplier not found or no changes made"
+
+    except Exception as e:
+        print("Error deleting supplier:", str(e))
+        return "Error occurred while deleting the supplier"
+
 
 def get_supplier_details_by_id(supplier_id):
     if not supplier_id:
