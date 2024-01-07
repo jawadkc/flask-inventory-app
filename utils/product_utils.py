@@ -13,6 +13,7 @@ def get_products(userPhone):
         client = connect()
         print("client is",client)
         transformedPhone = convert_phone_number(userPhone)
+        print("transformed phone:",transformedPhone)
         db = client.get_database(transformedPhone)
         user_collection = db.products
         allProducts = list(user_collection.find({}))
