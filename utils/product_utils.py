@@ -1,16 +1,20 @@
 from flask import jsonify
 import requests
 from utils.dbConfig import connect
+def convert_phone_number(phone_number):
+    if phone_number.startswith("+92") and len(phone_number) == 13:
+        return "0" + phone_number[3:]
+    else:
+        return phone_number
+
 def get_products(userPhone):
     try:
         connect()
         client = connect()
         print("client is",client)
-        db = client.get_database(userPhone)
-        print("number is: ",userPhone)
-        print("db is:",db)
+        transformedPhone = convert_phone_number(userPhone)
+        db = client.get_database(transformedPhone)
         user_collection = db.products
-        print("user collection is: ",user_collection)
         allProducts = list(user_collection.find({}))
         for product in allProducts:
             product['_id'] = str(product['_id'])
