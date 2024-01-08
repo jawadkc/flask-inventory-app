@@ -3,7 +3,7 @@ from twilio.twiml.messaging_response import MessagingResponse
 
 
 from utils.product_utils import get_products, get_product_details_by_name, add_product, delete_product, edit_product
-from utils.supplier_utils import get_suppliers, get_supplier_details_by_name, delete_supplier, add_supplier, edit_supplier
+from utils.supplier_utils import get_suppliers, get_supplier_id_by_name, delete_supplier, add_supplier, edit_supplier
 from utils.employee_utils import get_employees,get_employee_details_by_name, delete_employee , get_employee_details_by_id, add_employee, edit_employee
 
 
@@ -249,11 +249,7 @@ def sms_reply():
             else:
                 if second_menu == 'removesupplier':
                     supplier_name = msg  # Assuming the message contains the name of the supplier to remove
-<<<<<<< HEAD
                     supplier_id = get_supplier_id_by_name(supplier_name, user_phone)
-=======
-                    supplier_id = get_supplier_id_by_name(supplier_name,user_phone)
->>>>>>> main
                     if supplier_id=="Supplier not found":
                         # Handle cases where supplier is not found or error occurred
                         reply = "Supplier does not exist"
@@ -271,7 +267,7 @@ def sms_reply():
                     return str(resp)  
                 elif second_menu == 'viewsupplier':
                     supplier_name = msg  # Assuming the message contains the name of the supplier to remove
-                    result = get_supplier_details_by_name(supplier_name)
+                    result = get_supplier_id_by_name(supplier_name)
                     if result=="Supplier not found":
                         # Handle cases where supplier is not found or error occurred
                         reply = "Supplier does not exist"
@@ -307,13 +303,13 @@ def sms_reply():
                     return str(resp)
                 elif second_menu=="editsupplier":
                     supplier_Name,item_name,new_value=msg.split(",")
-                    supplier_Id = get_supplier_id_by_name(supplier_Name)
+                    supplier_Id = get_supplier_id_by_name(supplier_Name, user_phone)
                     if supplier_Id=="Supplier not found":
                         # Handle cases where supplier is not found or error occurred
                         reply = "Supplier does not exist"
                     else:
                         # Call the API or method to remove the supplier using supplier_id
-                        result = get_supplier_details_by_id(str(supplier_Id))
+                        result = get_supplier_id_by_name(str(supplier_Id), user_phone)
                         if result == "Supplier not found":
                             reply = "Supplier not found"
                         elif result=="Supplier details not found":
@@ -439,7 +435,7 @@ def sms_reply():
                     return str(resp)
                 elif second_menu=="editemployee":
                     employee_Name,item_name,new_value=msg.split(",")
-                    employee_Id = get_employee_id_by_name(employee_Name)
+                    employee_Id = get_employee_details_by_id(employee_Name)
                     if employee_Id=="Employeer not found":
                         # Handle cases where employee is not found or error occurred
                         reply = "Employee does not exist"
