@@ -173,7 +173,7 @@ def sms_reply():
                     name, description, price, quantity, unitOfMeasure, category, brand, sku, supplierName = product_details.split(",")
                     supplier=get_product_details_by_name(str(supplierName),user_phone))
                     print(name, description, price, quantity, unitOfMeasure, category, brand, sku, supplierName)
-                    reply = add_product(name, price, category, quantity, sku, brand, unitOfMeasure, supplier, description)
+                    reply = add_product(name, price, category, quantity, sku, brand, unitOfMeasure, supplier, description, user_phone)
                     print(reply)
                     user_session['second_menu'] = None  # Reset the second menu
                     
@@ -451,7 +451,7 @@ def sms_reply():
                     return str(resp)
                 elif second_menu=="editemployee":
                     employee_Name,item_name,new_value=msg.split(",")
-                    employee_Id = get_employee_id_by_name(employee_Name)
+                    employee_Id = get_employee_details_by_name(employee_Name)
                     if employee_Id=="Employeer not found":
                         # Handle cases where employee is not found or error occurred
                         reply = "Employee does not exist"

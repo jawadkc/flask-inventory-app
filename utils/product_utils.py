@@ -1,4 +1,6 @@
 from flask import jsonify
+from bson import ObjectId
+
 import requests
 from utils.dbConfig import connect
 def convert_phone_number(phone_number):
@@ -38,6 +40,7 @@ def get_product_details_by_name(product_name,userPhone):
         productDetails = user_collection.find_one({"name": product_name})
         productDetails["_id"]=str(productDetails["_id"])
         client.close()
+        
         if productDetails:
             print("product details are: ", productDetails)
             return productDetails
@@ -49,65 +52,78 @@ def get_product_details_by_name(product_name,userPhone):
         print("Error fetching product details:", str(e))
         return "Internal Server Error", 500
 
-def add_product(name, price, category, quantity, sku, brand, unitOfMeasure, supplier, description):
-    api_url = "https://inventory-website.vercel.app/api/product/addP"
-    
-    form_data = {
-        "name": name,
-        "price": price,
-        "category": category,
-        "quantity": quantity,
-        "sku": sku,
-        "brand": brand,
-        "unitOfMeasure": unitOfMeasure,
-        "supplier": supplier,
-        "description": description
-    }
-
+def add_product(name, price, category, quantity, sku, brand, unitOfMeasure, supplier, description, userPhone):
     try:
-        response = requests.post(api_url, json=form_data)
-        if response.status_code == 200:
-            return "Product added successfully"  # Or any success message
+        transformedPhone = convert_phone_number(userPhone)
+        client = connect()
+
+        db = client.get_database(transformedPhone)
+        user_collection = db.products
+
+        product_data = {
+            "name": name,
+            "price": price,
+            "category": category,
+            "quantity": quantity,
+            "sku": sku,
+            "brand": brand,
+            "unitOfMeasure": unitOfMeasure,
+            "supplier": supplier,
+            "description": description
+        }
+
+        # Insert the product data into the collection
+        result = user_collection.insert_one(product_data)
+
+        client.close()
+
+        if result.inserted_id:
+            return "Product added successfully"
         else:
-            print("Failed to add product")
-            print("Response is: ",response)
-            return "Failed to add product"  # Or any error message based on response
+            return "Failed to add product"
 
-    except requests.RequestException as e:
-        return f"Error: {str(e)}"  # Handle any exception that occurred during the request
-
-def delete_product(product_id,userPhone):
-    api_url = f"https://inventory-website.vercel.app/api/product/deleteP"
-    payload = {"productId": product_id}
-
+    except Exception as e:
+        print("Error adding product:", str(e))
+        return "Internal Server Error", 500
+    
+def delete_product(product_id, userPhone):
     try:
-        response = requests.delete(api_url, json=payload)
-        if response.status_code == 200:
+        connect()
+        client = connect()
+        transformedPhone = convert_phone_number(userPhone)
+        db = client.get_database(transformedPhone)
+        user_collection = db.products
+        result = user_collection.delete_one({"_id": ObjectId(product_id)})
+        client.close()
+
+        if result.deleted_count > 0:
             return "Product deleted successfully"
-        elif response.status_code == 404:
+        else:
             return "Product not found"
-        else:
-            return "Failed to delete product"
-    except requests.RequestException as e:
-        return f"Error: {str(e)}"
+
+    except Exception as e:
+        print("Error deleting product:", str(e))
+        return "Error occurred while deleting the product"
 
 
-def edit_product(id,updatedProduct,userPhone):
-    api_url = "https://inventory-website.vercel.app/api/product/updateP"
-    
-    form_data = {
-        "productId": id,
-        "updatedProduct": updatedProduct
-    }
-
+def edit_product(id, updatedProduct, userPhone):
     try:
-        response = requests.put(api_url, json=form_data)
-        if response.status_code == 200:
-            return "Product edited successfully"  # Or any success message
-        else:
-            print("Failed to edit product")
-            print("Response is: ",response)
-            return "Failed to edit product"  # Or any error message based on response
+        connect()
+        client = connect()
+        transformedPhone = convert_phone_number(userPhone)
+        db = client.get_database(transformedPhone)
+        user_collection = db.products
+        
+        product_id = ObjectId(id)
+        result = user_collection.update_one({"_id": product_id}, {"$set": updatedProduct})
 
-    except requests.RequestException as e:
-        return f"Error: {str(e)}"  # Handle any exception that occurred during the request
+        client.close()
+
+        if result.modified_count > 0:
+            return "Product edited successfully"
+        else:
+            return "Product not found or no changes made"
+
+    except Exception as e:
+        print("Error editing product:", str(e))
+        return "Error occurred while editing the product"

@@ -1,4 +1,7 @@
+from flask import jsonify
 import requests
+from bson import ObjectId
+from utils.dbConfig import connect
 
 from utils.dbConfig import connect
 def convert_phone_number(phone_number):
@@ -22,7 +25,7 @@ def get_employees(userPhone):
         print("Error fetching Employees:", str(e))
         return "Internal Server Error", 500       
 
-def get_employee_details_by_name(employee_name,userPhone):
+def get_employee_id_by_name(employee_name,userPhone):
     try:
         connect()
         client = connect()
@@ -31,14 +34,19 @@ def get_employee_details_by_name(employee_name,userPhone):
         db = client.get_database(transformedPhone)
         user_collection = db.employees
         employeeDetails = user_collection.find_one({"name": employee_name})
-        employeeDetails["_id"]=str(employeeDetails["_id"])
         client.close()
+
         if employeeDetails:
             print("employee details are: ", employeeDetails)
-            return employeeDetails
+            return employeeDetails['_id']
         else:
             print("Employee not found")
             return "Employee not found"#, 404
+
+    except Exception as e:
+        print("Error fetching Employee details:", str(e))
+        return "Internal Server Error", 500
+
 
     except Exception as e:
         print("Error fetching employee details:", str(e))
@@ -103,23 +111,24 @@ def add_employee(name, email, phone, address ,position, hireDate,salary,workingH
     except requests.RequestException as e:
         return f"Error: {str(e)}" 
     
-
-def edit_employee(id,updatedEmployee):
-    api_url = "https://inventory-website.vercel.app/api/employee/updateE"
-    
-    form_data = {
-        "employeeId": id,
-        "updatedEmployee": updatedEmployee
-    }
-
+def edit_employee(id, updatedEmployee, userPhone):
     try:
-        response = requests.put(api_url, json=form_data)
-        if response.status_code == 200:
-            return "Employee edited successfully"  # Or any success message
-        else:
-            print("Failed to edit employee")
-            print("Response is: ",response)
-            return "Failed to edit employee"  # Or any error message based on response
+        connect()
+        client = connect()
+        transformedPhone = convert_phone_number(userPhone)
+        db = client.get_database(transformedPhone)
+        user_collection = db.employees
+        
+        employee_id = ObjectId(id)
+        result = user_collection.update_one({"_id": employee_id}, {"$set": updatedEmployee})
 
-    except requests.RequestException as e:
-        return f"Error: {str(e)}"  # Handle any exception that occurred during the request
+        client.close()
+
+        if result.modified_count > 0:
+            return "Employee edited successfully"
+        else:
+            return "Employee not found or no changes made"
+
+    except Exception as e:
+        print("Error editing employee:", str(e))
+        return "Error occurred while editing the employee"
