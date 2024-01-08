@@ -255,7 +255,7 @@ def sms_reply():
                         reply = "Supplier does not exist"
                     else:
                         # Call the API or method to remove the supplier using supplier_id
-                        result = delete_supplier(str(supplier_id))
+                        result = delete_supplier(str(supplier_id, user_phone))
                         if result == "Supplier deleted successfully":
                             reply = f"Supplier {supplier_name} removed successfully"
                         else:
