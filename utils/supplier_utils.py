@@ -44,6 +44,32 @@ def get_supplier_id_by_name(supplier_name, userPhone):
         print("Error fetching Supplier details:", str(e))
         return "Internal Server Error", 500
 
+def get_supplier_details_by_name(supplier_name, userPhone):
+    if not supplier_name:
+        return "Supplier name is required"
+
+    try:
+        connect()
+        client = connect()
+        transformedPhone = convert_phone_number(userPhone)
+        db = client.get_database(transformedPhone)
+        user_collection = db.suppliers  # Adjust collection name as per your database
+        
+        supplier_details = user_collection.find_one({"name": supplier_name})
+        client.close()
+
+        if supplier_details:
+            print("Supplier Details are: ", supplier_details)
+            return supplier_details
+        else:
+            print("Supplier not found")
+            return "Supplier not found"
+
+    except Exception as e:
+        print("Error fetching supplier details:", str(e))
+        return "Internal Server Error", 500
+
+
 def delete_supplier(supplier_id, userPhone):
     try:
         connect()

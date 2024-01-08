@@ -2,8 +2,8 @@ from flask import Flask, request,session
 from twilio.twiml.messaging_response import MessagingResponse
 
 
-from utils.product_utils import get_products, get_product_details_by_name, add_product, delete_product, edit_product
-from utils.supplier_utils import get_suppliers, get_supplier_details_by_name, delete_supplier, add_supplier, edit_supplier
+from utils.product_utils import get_products, get_product_details_by_name, add_product, delete_product, edit_product, get_product_id_by_name
+from utils.supplier_utils import get_suppliers, get_supplier_id_by_name, delete_supplier, add_supplier, edit_supplier, get_supplier_details_by_name
 from utils.employee_utils import get_employees,get_employee_details_by_name, delete_employee , get_employee_details_by_id, add_employee, edit_employee
 
 
@@ -124,7 +124,7 @@ def sms_reply():
                 if second_menu == 'removeproduct':
                     
                     product_name = msg  # Assuming the message contains the name of the product to remove
-                    product_id = get_product_details_by_name(product_name,user_phone)
+                    product_id = get_product_id_by_name(product_name,user_phone)
                     if product_id=="Product not found":
                         # Handle cases where product is not found or error occurred
                         reply = "Product does not exist"
@@ -171,7 +171,7 @@ def sms_reply():
                 elif second_menu == 'addproduct':
                     product_details = msg
                     name, description, price, quantity, unitOfMeasure, category, brand, sku, supplierName = product_details.split(",")
-                    supplier=get_product_details_by_name(str(supplierName),user_phone)
+                    supplier=get_product_details_by_name(str(supplierName),user_phone);
                     print(name, description, price, quantity, unitOfMeasure, category, brand, sku, supplierName)
                     reply = add_product(name, price, category, quantity, sku, brand, unitOfMeasure, supplier, description, user_phone)
                     print(reply)
@@ -182,7 +182,7 @@ def sms_reply():
                     return str(resp)
                 elif second_menu=="editproduct":
                     product_Name,item_name,new_value=msg.split(",")
-                    product_Id = get_product_details_by_name(product_Name,user_phone)
+                    product_Id = get_product_id_by_name(product_Name,user_phone)
                     if product_Id=="Product not found":
                         # Handle cases where product is not found or error occurred
                         reply = "Product does not exist"
@@ -200,7 +200,7 @@ def sms_reply():
                             product_details = result
                             product_details[item_name]=new_value
                             print("product details from edit product are",product_details)
-                            edit_response = edit_product(product_details['_id'],product_details)
+                            edit_response = edit_product(product_details['_id'],product_details, user_phone)
                              # Format the product details into a reply message
                             reply = edit_response
            
@@ -265,13 +265,13 @@ def sms_reply():
             else:
                 if second_menu == 'removesupplier':
                     supplier_name = msg  # Assuming the message contains the name of the supplier to remove
-                    supplier_id = get_supplier_details_by_name(supplier_name,user_phone)
+                    supplier_id = get_supplier_id_by_name(supplier_name,user_phone)
                     if supplier_id=="Supplier not found":
                         # Handle cases where supplier is not found or error occurred
                         reply = "Supplier does not exist"
                     else:
                         # Call the API or method to remove the supplier using supplier_id
-                        result = delete_supplier(str(supplier_id))
+                        result = delete_supplier(str(supplier_id), user_phone)
                         if result == "Supplier deleted successfully":
                             reply = f"Supplier {supplier_name} removed successfully"
                         else:
@@ -283,7 +283,7 @@ def sms_reply():
                     return str(resp)  
                 elif second_menu == 'viewsupplier':
                     supplier_name = msg  # Assuming the message contains the name of the supplier to remove
-                    result = get_supplier_details_by_name(supplier_name)
+                    result = get_supplier_id_by_name(supplier_name)
                     if result=="Supplier not found":
                         # Handle cases where supplier is not found or error occurred
                         reply = "Supplier does not exist"
@@ -310,7 +310,7 @@ def sms_reply():
                 elif second_menu=="addsupplier":
                     supplier_details = msg
                     name,contactPerson,email,phone,address = supplier_details.split(",")
-                    reply = add_supplier(name,contactPerson,email,phone,address)
+                    reply = add_supplier(name,contactPerson,email,phone,address, user_phone)
                     print(reply)
                     user_session['second_menu'] = None  # Reset the second menu
                     
@@ -336,7 +336,7 @@ def sms_reply():
                              # Parse the details received in the result
                             supplier_details = result
                             supplier_details[item_name]=new_value
-                            reply =edit_supplier(supplier_details['_id'],supplier_details)
+                            reply =edit_supplier(supplier_details['_id'],supplier_details, user_phone)
            
                     user_session['second_menu'] = None  # Reset the second menu
                    
@@ -442,7 +442,7 @@ def sms_reply():
                 elif second_menu=="addemployee":
                     employee_details = msg
                     name,email,phone,address,position,hireDate,salary,workingHours,status = employee_details.split(",")
-                    reply = add_employee(name,email,phone,address,position,hireDate,salary,workingHours,status)
+                    reply = add_employee(name,email,phone,address,position,hireDate,salary,workingHours,status, user_phone)
                     print(reply)
                     user_session['second_menu'] = None  # Reset the second menu
                     
@@ -451,13 +451,13 @@ def sms_reply():
                     return str(resp)
                 elif second_menu=="editemployee":
                     employee_Name,item_name,new_value=msg.split(",")
-                    employee_Id = get_employee_details_by_name(employee_Name)
+                    employee_Id = get_employee_details_by_id(employee_Name, user_phone)
                     if employee_Id=="Employeer not found":
                         # Handle cases where employee is not found or error occurred
                         reply = "Employee does not exist"
                     else:
                         # Call the API or method to remove the employee using employee_id
-                        result = get_employee_details_by_id(str(employee_Id))
+                        result = get_employee_details_by_id(str(employee_Id), user_phone)
                         if result == "Employee not found":
                             reply = "Employee not found"
                         elif result=="Employee details not found":
@@ -468,7 +468,7 @@ def sms_reply():
                              # Parse the details received in the result
                             employee_details = result
                             employee_details[item_name]=new_value
-                            reply =edit_employee(employee_details['_id'],employee_details)
+                            reply =edit_employee(employee_details['_id'],employee_details, user_phone)
            
                     user_session['second_menu'] = None  # Reset the second menu
                    

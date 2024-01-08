@@ -52,6 +52,28 @@ def get_product_details_by_name(product_name,userPhone):
         print("Error fetching product details:", str(e))
         return "Internal Server Error", 500
 
+def get_product_id_by_name(product_name, userPhone): 
+    try:
+        connect()
+        client = connect()
+        transformedPhone = convert_phone_number(userPhone)
+        db = client.get_database(transformedPhone)
+        user_collection = db.products  # Assuming a 'products' collection
+        
+        product_details = user_collection.find_one({"name": product_name})
+        client.close()
+
+        if product_details:
+            print("Product Details are: ", product_details)
+            return product_details['_id']
+        else:
+            print("Product not Found")
+            return "Product not found"
+    except Exception as e:
+        print("Error fetching Product details:", str(e))
+        return "Internal Server Error", 500
+
+
 def add_product(name, price, category, quantity, sku, brand, unitOfMeasure, supplier, description, userPhone):
     try:
         transformedPhone = convert_phone_number(userPhone)
