@@ -120,3 +120,7 @@ def edit_supplier(id, updatedSupplier, userPhone):
             return "Supplier edited successfully"
         else:
             return "Supplier not found or no changes made"
+
+    except Exception as e:
+        print("Error editing supplier:", str(e))
+        return "Error occurred while editing the supplier"
