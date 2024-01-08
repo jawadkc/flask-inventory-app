@@ -86,7 +86,15 @@ def add_supplier(name, contactPerson, email, phone, address, userPhone):
             "address": address
         }
 
-        
+        # Insert the supplier data into the collection
+        result = user_collection.insert_one(supplier_data)
+
+        client.close()
+
+        if result.inserted_id:
+            return "Supplier added successfully"
+        else:
+            return "Failed to add supplier"
 
     except Exception as e:
         print("Error adding supplier:", str(e))
