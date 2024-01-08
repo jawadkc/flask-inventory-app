@@ -144,7 +144,7 @@ def sms_reply():
                 
                 elif second_menu == 'viewproduct':
                     product_name = msg  # Assuming the message contains the name of the product to remove
-                    result = get_product_details_by_name(product_name,user_phone)
+                    result = get_products(product_name,user_phone)
                     if result=="Product not found":
                         # Handle cases where product is not found or error occurred
                         reply = "Product does not exist"
