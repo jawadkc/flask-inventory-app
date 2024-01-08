@@ -51,33 +51,40 @@ def get_product_details_by_name(product_name,userPhone):
         print("Error fetching product details:", str(e))
         return "Internal Server Error", 500
 
-def add_product(name, price, category, quantity, sku, brand, unitOfMeasure, supplier, description):
-    api_url = "https://inventory-website.vercel.app/api/product/addP"
-    
-    form_data = {
-        "name": name,
-        "price": price,
-        "category": category,
-        "quantity": quantity,
-        "sku": sku,
-        "brand": brand,
-        "unitOfMeasure": unitOfMeasure,
-        "supplier": supplier,
-        "description": description
-    }
-
+def add_product(name, price, category, quantity, sku, brand, unitOfMeasure, supplier, description, userPhone):
     try:
-        response = requests.post(api_url, json=form_data)
-        if response.status_code == 200:
-            return "Product added successfully"  # Or any success message
+        transformedPhone = convert_phone_number(userPhone)
+        client = connect()
+
+        db = client.get_database(transformedPhone)
+        user_collection = db.products
+
+        product_data = {
+            "name": name,
+            "price": price,
+            "category": category,
+            "quantity": quantity,
+            "sku": sku,
+            "brand": brand,
+            "unitOfMeasure": unitOfMeasure,
+            "supplier": supplier,
+            "description": description
+        }
+
+        # Insert the product data into the collection
+        result = user_collection.insert_one(product_data)
+
+        client.close()
+
+        if result.inserted_id:
+            return "Product added successfully"
         else:
-            print("Failed to add product")
-            print("Response is: ",response)
-            return "Failed to add product"  # Or any error message based on response
+            return "Failed to add product"
 
-    except requests.RequestException as e:
-        return f"Error: {str(e)}"  # Handle any exception that occurred during the request
-
+    except Exception as e:
+        print("Error adding product:", str(e))
+        return "Internal Server Error", 500
+    
 def delete_product(product_id, userPhone):
     try:
         connect()
