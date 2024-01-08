@@ -100,25 +100,23 @@ def add_supplier(name, contactPerson, email, phone, address, userPhone):
         print("Error adding supplier:", str(e))
         return "Internal Server Error", 500
 
-def edit_supplier(id,updatedSupplier, userPhone):
-
+def edit_supplier(id, updatedSupplier, userPhone):
     try:
-        connect()
-        client = connect()
         transformedPhone = convert_phone_number(userPhone)
+        client = connect()
+
         db = client.get_database(transformedPhone)
         user_collection = db.suppliers
 
+        # Convert the id string to an ObjectId
         supplier_id = ObjectId(id)
+
+        # Update the supplier information based on the provided ID
         result = user_collection.update_one({"_id": supplier_id}, {"$set": updatedSupplier})
 
         client.close()
 
         if result.modified_count > 0:
-            return "Product edited successfully"
+            return "Supplier edited successfully"
         else:
-            return "Product not found or no changes made"
-
-    except Exception as e:
-        print("Error editing product:", str(e))
-        return "Error occurred while editing the product"
+            return "Supplier not found or no changes made"
