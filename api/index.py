@@ -3,8 +3,9 @@ from twilio.twiml.messaging_response import MessagingResponse
 
 
 from utils.product_utils import get_products, get_product_details_by_name, add_product, delete_product, edit_product
-from utils.supplier_utils import get_suppliers, get_supplier_id_by_name, delete_supplier, add_supplier, edit_supplier
+from utils.supplier_utils import get_suppliers, get_supplier_details_by_name, delete_supplier, add_supplier, edit_supplier
 from utils.employee_utils import get_employees,get_employee_details_by_name, delete_employee , get_employee_details_by_id, add_employee, edit_employee
+
 
 
 
@@ -29,14 +30,8 @@ def sms_reply():
     resp = MessagingResponse()
 
     if user_session['first_time']:
-        reply = "Welcome to the Inventory Management Website\n"
-        "1. Information regarding Products\n"
-        "2. Information regarding Suppliers\n"
-        "3. Information regarding Employees\n"
-        "4. Type reset to reset\n" 
-        "5. General information about the whole system"
-
-        print("reply in first_time",reply)
+        reply = "Welcome to the Inventory Management Website\n1. Information regarding Products\n2. Information regarding Suppliers\n3. Information regarding Employees\n4. Type reset to reset\n5. General information about the whole system"
+        print("reply in first_ti1me",reply)
         user_session['first_time'] = False
         session[user_phone] = user_session
         resp.message(reply)
@@ -80,11 +75,9 @@ def sms_reply():
             if not second_menu:
                 # Handle product menu options
                 if msg == '1': 
-                    # Add Product Functionality 
                     user_session['second_menu'] = 'addproduct'
                     second_menu = 'addproduct'
                     reply = "Please provide details of the product in the format:\nname,description,price,quantity,unitOfMeasure,category,brand,sku,supplierName(which exists)"
-
                 elif msg == '2':
                     user_session['second_menu'] = 'removeproduct'
                     second_menu = 'removeproduct'
@@ -123,28 +116,34 @@ def sms_reply():
                     #delete all the first_menu, secon_menu and first_Time if necessary
                 else:
                     reply = "Invalid option. Please choose a valid option."
+                
 
+               
 
             else:
                 if second_menu == 'removeproduct':
-                    product_name = msg
-                    product_id = get_product_details_by_name(product_name, user_phone)
-                    if product_id == "Product not found":
+                    
+                    product_name = msg  # Assuming the message contains the name of the product to remove
+                    product_id = get_product_details_by_name(product_name,user_phone)
+                    if product_id=="Product not found":
+                        # Handle cases where product is not found or error occurred
                         reply = "Product does not exist"
                     else:
-                        result = delete_product(product_id, user_phone)
+                        # Call the API or method to remove the product using product_id
+                        result = delete_product(str(product_id),user_phone)
                         if result == "Product deleted successfully":
                             reply = f"Product {product_name} removed successfully"
                         else:
                             reply = f"Failed to remove product: {result}"
                     user_session['second_menu'] = None  # Reset the second menu
+                    
                     session[user_phone] = user_session
                     resp.message(reply)
+                    
                     return str(resp)
-                
                 elif second_menu == 'viewproduct':
                     product_name = msg  # Assuming the message contains the name of the product to remove
-                    result = get_products(product_name,user_phone)
+                    result = get_product_details_by_name(product_name,user_phone)
                     if result=="Product not found":
                         # Handle cases where product is not found or error occurred
                         reply = "Product does not exist"
@@ -172,32 +171,49 @@ def sms_reply():
                 elif second_menu == 'addproduct':
                     product_details = msg
                     name, description, price, quantity, unitOfMeasure, category, brand, sku, supplierName = product_details.split(",")
-                    supplier = get_product_details_by_name(supplierName, user_phone)
-                    reply = add_product(name, description, price, quantity, unitOfMeasure, category, brand, sku, supplier)
+                    supplier=str(get_product_details_by_name(supplierName,user_phone))
+                    print(name, description, price, quantity, unitOfMeasure, category, brand, sku, supplierName)
+                    reply = add_product(name, price, category, quantity, sku, brand, unitOfMeasure, supplier, description, user_phone)
+                    print(reply)
                     user_session['second_menu'] = None  # Reset the second menu
+                    
                     session[user_phone] = user_session
                     resp.message(reply)
                     return str(resp)
-
-                elif second_menu == "editproduct":
-                    product_Name, item_name, new_value = msg.split(",")
-                    product_Id = get_product_details_by_name(product_Name, user_phone)
-                    if product_Id == "Product not found":
+                elif second_menu=="editproduct":
+                    product_Name,item_name,new_value=msg.split(",")
+                    product_Id = get_product_details_by_name(product_Name,user_phone)
+                    if product_Id=="Product not found":
+                        # Handle cases where product is not found or error occurred
                         reply = "Product does not exist"
                     else:
-                        result = get_product_details_by_name(product_Id)
-                        if result == "Product not found" or result == "Product details not found" or result == "Product ID is required":
-                            reply = "Failed to fetch product details"
+                        # Call the API or method to remove the product using product_id
+                        result = get_product_details_by_name(str(product_Id), user_phone)
+                        if result == "Product not found":
+                            reply = "Product not found"
+                        elif result=="Product details not found":
+                            reply = "Product details not found"
+                        elif result=="Product ID is required":
+                            reply="Product ID is required"
                         else:
+                             # Parse the details received in the result
                             product_details = result
-                            product_details[item_name] = new_value
-                            edit_response = edit_product(product_Id, product_details, user_phone)
+                            product_details[item_name]=new_value
+                            print("product details from edit product are",product_details)
+                            edit_response = edit_product(product_details['_id'],product_details)
+                             # Format the product details into a reply message
                             reply = edit_response
-
+           
                     user_session['second_menu'] = None  # Reset the second menu
+                    
                     session[user_phone] = user_session
                     resp.message(reply)
                     return str(resp)
+                    
+                    
+                    
+                    
+                       
 
         elif first_menu == 'suppliermenu':
             if not second_menu:
@@ -249,13 +265,13 @@ def sms_reply():
             else:
                 if second_menu == 'removesupplier':
                     supplier_name = msg  # Assuming the message contains the name of the supplier to remove
-                    supplier_id = get_supplier_id_by_name(supplier_name, user_phone)
+                    supplier_id = get_supplier_details_by_name(supplier_name,user_phone)
                     if supplier_id=="Supplier not found":
                         # Handle cases where supplier is not found or error occurred
                         reply = "Supplier does not exist"
                     else:
                         # Call the API or method to remove the supplier using supplier_id
-                        result = delete_supplier(str(supplier_id, user_phone))
+                        result = delete_supplier(str(supplier_id))
                         if result == "Supplier deleted successfully":
                             reply = f"Supplier {supplier_name} removed successfully"
                         else:
@@ -267,7 +283,7 @@ def sms_reply():
                     return str(resp)  
                 elif second_menu == 'viewsupplier':
                     supplier_name = msg  # Assuming the message contains the name of the supplier to remove
-                    result = get_supplier_id_by_name(supplier_name)
+                    result = get_supplier_details_by_name(supplier_name)
                     if result=="Supplier not found":
                         # Handle cases where supplier is not found or error occurred
                         reply = "Supplier does not exist"
@@ -303,13 +319,13 @@ def sms_reply():
                     return str(resp)
                 elif second_menu=="editsupplier":
                     supplier_Name,item_name,new_value=msg.split(",")
-                    supplier_Id = get_supplier_id_by_name(supplier_Name, user_phone)
+                    supplier_Id = get_supplier_details_by_name(supplier_Name)
                     if supplier_Id=="Supplier not found":
                         # Handle cases where supplier is not found or error occurred
                         reply = "Supplier does not exist"
                     else:
                         # Call the API or method to remove the supplier using supplier_id
-                        result = get_supplier_id_by_name(str(supplier_Id), user_phone)
+                        result = get_supplier_details_by_name(str(supplier_Id))
                         if result == "Supplier not found":
                             reply = "Supplier not found"
                         elif result=="Supplier details not found":
@@ -435,7 +451,7 @@ def sms_reply():
                     return str(resp)
                 elif second_menu=="editemployee":
                     employee_Name,item_name,new_value=msg.split(",")
-                    employee_Id = get_employee_details_by_id(employee_Name)
+                    employee_Id = get_employee_details_by_name(employee_Name)
                     if employee_Id=="Employeer not found":
                         # Handle cases where employee is not found or error occurred
                         reply = "Employee does not exist"
@@ -460,6 +476,13 @@ def sms_reply():
                     resp.message(reply)
                     return str(resp)
                     
+                
+        
+        
+
+       
+    
+    
     #if the above conditions are not working
     print("Before sending the response: ",reply)
     session[user_phone] = user_session
