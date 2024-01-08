@@ -25,6 +25,7 @@ def get_employees(userPhone):
         print("Error fetching Employees:", str(e))
         return "Internal Server Error", 500       
 
+
 def get_employee_id_by_name(employee_name,userPhone):
     try:
         connect()
@@ -48,9 +49,7 @@ def get_employee_id_by_name(employee_name,userPhone):
         return "Internal Server Error", 500
 
 
-    except Exception as e:
-        print("Error fetching employee details:", str(e))
-        return "Internal Server Error", 500
+    
 def delete_employee(employee_id, userPhone):
     try:
         connect()
