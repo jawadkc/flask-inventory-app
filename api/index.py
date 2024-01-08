@@ -171,7 +171,7 @@ def sms_reply():
                 elif second_menu == 'addproduct':
                     product_details = msg
                     name, description, price, quantity, unitOfMeasure, category, brand, sku, supplierName = product_details.split(",")
-                    supplier=str(get_product_details_by_name(supplierName,user_phone))
+                    supplier=get_product_details_by_name(str(supplierName),user_phone))
                     print(name, description, price, quantity, unitOfMeasure, category, brand, sku, supplierName)
                     reply = add_product(name, price, category, quantity, sku, brand, unitOfMeasure, supplier, description, user_phone)
                     print(reply)
