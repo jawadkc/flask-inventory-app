@@ -3,6 +3,7 @@ import requests
 from bson import ObjectId
 from utils.dbConfig import connect
 
+from utils.dbConfig import connect
 def convert_phone_number(phone_number):
     return "0" + phone_number[12:]
 
@@ -17,7 +18,7 @@ def get_employees(userPhone):
         for employee in allEmployees:
             employee['_id'] = str(employee['_id'])
         print("allEmployee are: ", allEmployees)    
-        #return jsonify({allProducts})
+        #return jsonify({allEmployees})
         return allEmployees
 
     except Exception as e:
@@ -47,6 +48,9 @@ def get_employee_id_by_name(employee_name,userPhone):
         return "Internal Server Error", 500
 
 
+    except Exception as e:
+        print("Error fetching employee details:", str(e))
+        return "Internal Server Error", 500
 def delete_employee(employee_id):
     api_url = f"https://inventory-website.vercel.app/api/employee/deleteE"
     payload = {"employeeId": employee_id}
