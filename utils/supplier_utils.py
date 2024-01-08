@@ -70,28 +70,27 @@ def delete_supplier(supplier_id, userPhone):
         return "Error occurred while deleting the supplier"
 
 
-def add_supplier(name, contactPerson, email, phone, address):
-    api_url = "https://inventory-website.vercel.app/api/supplier/addS"
-    
-    form_data = {
-        "name": name,
-        "contactPerson": contactPerson,
-        "email": email,
-        "phone": phone,
-        "address": address
-    }
-
+def add_supplier(name, contactPerson, email, phone, address, userPhone):
     try:
-        response = requests.post(api_url, json=form_data)
-        if response.status_code == 200:
-            return "Supplier added successfully"  
-        else:
-            
-            print("Response is: ",response)
-            return "Failed to add supplier" 
+        transformedPhone = convert_phone_number(userPhone)
+        client = connect()
 
-    except requests.RequestException as e:
-        return f"Error: {str(e)}" 
+        db = client.get_database(transformedPhone)
+        user_collection = db.suppliers
+
+        supplier_data = {
+            "name": name,
+            "contactPerson": contactPerson,
+            "email": email,
+            "phone": phone,
+            "address": address
+        }
+
+        
+
+    except Exception as e:
+        print("Error adding supplier:", str(e))
+        return "Internal Server Error", 500
 
 def edit_supplier(id,updatedSupplier, userPhone):
 
