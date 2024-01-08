@@ -124,7 +124,7 @@ def sms_reply():
                 if second_menu == 'removeproduct':
                     
                     product_name = msg  # Assuming the message contains the name of the product to remove
-                    product_id = get_product_id_by_name(product_name,user_phone)
+                    product_id = get_product_details_by_name(product_name,user_phone)
                     if product_id=="Product not found":
                         # Handle cases where product is not found or error occurred
                         reply = "Product does not exist"
@@ -139,6 +139,7 @@ def sms_reply():
                     
                     session[user_phone] = user_session
                     resp.message(reply)
+                    
                     return str(resp)
                 elif second_menu == 'viewproduct':
                     product_name = msg  # Assuming the message contains the name of the product to remove
@@ -170,7 +171,7 @@ def sms_reply():
                 elif second_menu == 'addproduct':
                     product_details = msg
                     name, description, price, quantity, unitOfMeasure, category, brand, sku, supplierName = product_details.split(",")
-                    supplier=str(get_supplier_id_by_name(supplierName,user_phone))
+                    supplier=str(get_product_details_by_name(supplierName,user_phone))
                     print(name, description, price, quantity, unitOfMeasure, category, brand, sku, supplierName)
                     reply = add_product(name, price, category, quantity, sku, brand, unitOfMeasure, supplier, description)
                     print(reply)
@@ -181,13 +182,13 @@ def sms_reply():
                     return str(resp)
                 elif second_menu=="editproduct":
                     product_Name,item_name,new_value=msg.split(",")
-                    product_Id = get_product_id_by_name(product_Name,user_phone)
+                    product_Id = get_product_details_by_name(product_Name,user_phone)
                     if product_Id=="Product not found":
                         # Handle cases where product is not found or error occurred
                         reply = "Product does not exist"
                     else:
                         # Call the API or method to remove the product using product_id
-                        result = get_product_details_by_id(str(product_Id))
+                        result = get_product_details_by_name(str(product_Id), user_phone)
                         if result == "Product not found":
                             reply = "Product not found"
                         elif result=="Product details not found":
@@ -264,7 +265,7 @@ def sms_reply():
             else:
                 if second_menu == 'removesupplier':
                     supplier_name = msg  # Assuming the message contains the name of the supplier to remove
-                    supplier_id = get_supplier_id_by_name(supplier_name,user_phone)
+                    supplier_id = get_supplier_details_by_name(supplier_name,user_phone)
                     if supplier_id=="Supplier not found":
                         # Handle cases where supplier is not found or error occurred
                         reply = "Supplier does not exist"
@@ -318,13 +319,13 @@ def sms_reply():
                     return str(resp)
                 elif second_menu=="editsupplier":
                     supplier_Name,item_name,new_value=msg.split(",")
-                    supplier_Id = get_supplier_id_by_name(supplier_Name)
+                    supplier_Id = get_supplier_details_by_name(supplier_Name)
                     if supplier_Id=="Supplier not found":
                         # Handle cases where supplier is not found or error occurred
                         reply = "Supplier does not exist"
                     else:
                         # Call the API or method to remove the supplier using supplier_id
-                        result = get_supplier_details_by_id(str(supplier_Id))
+                        result = get_supplier_details_by_name(str(supplier_Id))
                         if result == "Supplier not found":
                             reply = "Supplier not found"
                         elif result=="Supplier details not found":
