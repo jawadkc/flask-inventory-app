@@ -30,7 +30,7 @@ def sms_reply():
     resp = MessagingResponse()
 
     if user_session['first_time']:
-        reply = "Welcome to the Inventory Management Website\n1. Information regarding Products\n2. Information regarding Suppliers\n3. Information regarding Employees\n4. Type reset to reset\n5. General information about the whole system"
+        reply = "Welcome to the Inventoryy Management Website\n1. Information regarding Products\n2. Information regarding Suppliers\n3. Information regarding Employees\n4. Type reset to reset\n5. General information about the whole system"
         print("reply in first_ti1me",reply)
         user_session['first_time'] = False
         session[user_phone] = user_session

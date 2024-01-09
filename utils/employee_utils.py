@@ -103,6 +103,7 @@ def add_employee(name, email, phone, address ,position, hireDate,salary,workingH
     except requests.RequestException as e:
         return f"Error: {str(e)}" 
     
+    
 
 def edit_employee(id,updatedEmployee):
     api_url = "https://inventory-website.vercel.app/api/employee/updateE"
