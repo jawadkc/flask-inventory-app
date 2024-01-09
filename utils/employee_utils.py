@@ -151,3 +151,28 @@ def edit_employee(id, updatedEmployee, userPhone):
     except Exception as e:
         print("Error editing employee:", str(e))
         return "Error occurred while editing the employee"
+
+def get_employee_details_by_name(employee_name, userPhone):
+    if not employee_name:
+        return "Employee name is required"
+
+    try:
+        connect()
+        client = connect()
+        transformedPhone = convert_phone_number(userPhone)
+        db = client.get_database(transformedPhone)
+        user_collection = db.employees  # Adjust collection name based on your database schema
+        
+        employee_details = user_collection.find_one({"name": employee_name})
+        client.close()
+
+        if employee_details:
+            print("Employee Details are: ", employee_details)
+            return employee_details
+        else:
+            print("Employee not found")
+            return "Employee not found"  # Or any specific message for employee not found
+
+    except Exception as e:
+        print("Error fetching employee details:", str(e))
+        return "Internal Server Error", 500\
