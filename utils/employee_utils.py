@@ -175,4 +175,4 @@ def get_employee_details_by_name(employee_name, userPhone):
 
     except Exception as e:
         print("Error fetching employee details:", str(e))
-        return "Internal Server Error", 500\
+        return "Internal Server Error", 500
