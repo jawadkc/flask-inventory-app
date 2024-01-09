@@ -128,7 +128,7 @@ def delete_product(product_id, userPhone):
         return "Error occurred while deleting the product"
 
 
-def edit_product(id, updatedProduct, userPhone):
+def edit_product(id, item_name, new_value, userPhone):
     try:
         connect()
         client = connect()
@@ -137,7 +137,7 @@ def edit_product(id, updatedProduct, userPhone):
         user_collection = db.products
         
         product_id = ObjectId(id)
-        result = user_collection.update_one({"_id": product_id}, {"$set": updatedProduct})
+        result = user_collection.update_one({"_id": product_id}, {"$set": {item_name: new_value}})
 
         client.close()
 
