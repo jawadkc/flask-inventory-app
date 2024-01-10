@@ -126,7 +126,7 @@ def add_supplier(name, contactPerson, email, phone, address, userPhone):
         print("Error adding supplier:", str(e))
         return "Internal Server Error", 500
 
-def edit_supplier(id, updatedSupplier, userPhone):
+def edit_supplier(id, item_name, new_value, userPhone):
     try:
         transformedPhone = convert_phone_number(userPhone)
         client = connect()
@@ -138,7 +138,7 @@ def edit_supplier(id, updatedSupplier, userPhone):
         supplier_id = ObjectId(id)
 
         # Update the supplier information based on the provided ID
-        result = user_collection.update_one({"_id": supplier_id}, {"$set": updatedSupplier})
+        result = user_collection.update_one({"_id": supplier_id}, {"$set": {item_name: new_value}})
 
         client.close()
 

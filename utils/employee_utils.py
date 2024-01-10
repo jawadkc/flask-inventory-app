@@ -130,7 +130,7 @@ def  add_employee(name, email, phone, address, position, hireDate, salary, worki
         print("Error adding employee:", str(e))
         return "Internal Server Error", 500
     
-def edit_employee(id, updatedEmployee, userPhone):
+def edit_employee(id, item_name,new_value, userPhone):
     try:
         connect()
         client = connect()
@@ -139,7 +139,7 @@ def edit_employee(id, updatedEmployee, userPhone):
         user_collection = db.employees
         
         employee_id = ObjectId(id)
-        result = user_collection.update_one({"_id": employee_id}, {"$set": updatedEmployee})
+        result = user_collection.update_one({"_id": employee_id}, {"$set": {item_name: new_value}})
 
         client.close()
 

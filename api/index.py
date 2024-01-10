@@ -325,7 +325,7 @@ def sms_reply():
                         reply = "Supplier does not exist"
                     else:
                         # Call the API or method to remove the supplier using supplier_id
-                        result = get_supplier_details_by_name(str(supplier_Id, user_phone))
+                        result = get_supplier_details_by_name(supplier_Name, user_phone)
                         if result == "Supplier not found":
                             reply = "Supplier not found"
                         elif result=="Supplier details not found":
@@ -336,7 +336,7 @@ def sms_reply():
                              # Parse the details received in the result
                             supplier_details = result
                             supplier_details[item_name]=new_value
-                            reply =edit_supplier(supplier_details['_id'],supplier_details, user_phone)
+                            reply =edit_supplier(supplier_details['_id'],item_name,new_value, user_phone)
            
                     user_session['second_menu'] = None  # Reset the second menu
                    
@@ -468,7 +468,7 @@ def sms_reply():
                              # Parse the details received in the result
                             employee_details = result
                             employee_details[item_name]=new_value
-                            reply =edit_employee(employee_details['_id'],employee_details, user_phone)
+                            reply =edit_employee(employee_details['_id'],item_name,new_value, user_phone)
            
                     user_session['second_menu'] = None  # Reset the second menu
                    
