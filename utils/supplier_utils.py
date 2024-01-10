@@ -83,7 +83,7 @@ def delete_supplier(supplier_id, userPhone):
 
         # Delete the supplier based on the supplied ID
         result = user_collection.delete_one({"_id": supplier_object_id})
-
+        
         client.close()
 
         if result.deleted_count > 0:

@@ -138,7 +138,7 @@ def edit_product(id, item_name, new_value, userPhone):
         
         product_id = ObjectId(id)
         result = user_collection.update_one({"_id": product_id}, {"$set": {item_name: new_value}})
-
+        print("result in edit product api is: ", result)
         client.close()
 
         if result.modified_count > 0:

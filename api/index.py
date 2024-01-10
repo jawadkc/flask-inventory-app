@@ -188,7 +188,7 @@ def sms_reply():
                         reply = "Product does not exist"
                     else:
                         # Call the API or method to remove the product using product_id
-                        result = get_product_details_by_name(product_name, user_phone)
+                        result = get_product_details_by_name(product_Name, user_phone)
                         if result == "Product not found":
                             reply = "Product not found"
                         elif result=="Product details not found":
