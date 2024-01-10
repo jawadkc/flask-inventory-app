@@ -164,6 +164,7 @@ def get_employee_details_by_name(employee_name, userPhone):
         user_collection = db.employees  # Adjust collection name based on your database schema
         
         employee_details = user_collection.find_one({"name": employee_name})
+        employee_details["_id"]=str(employee_details["_id"])
         client.close()
 
         if employee_details:
